@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Верфь</title>
+  <defs>
+    <linearGradient id="sea" x1="116" y1="100" x2="396" y2="414" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#25d1b2"/>
+      <stop offset="1" stop-color="#1687a1"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="#07151c"/>
+  <circle cx="256" cy="256" r="150" fill="#0d2832" stroke="#17414d" stroke-width="10"/>
+  <path d="M119 342c42-21 74-21 113 0s71 21 113 0 66-21 79-13v45c-27-2-48 5-72 18-49 26-89 26-139-1-34-18-60-19-94-3z" fill="url(#sea)"/>
+  <path d="M153 292h207l-30 65H184z" fill="#eaa25c" stroke="#ffd997" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M256 139v154M256 159l87 68h-87M241 170l-67 57h67" fill="none" stroke="#ecf8f6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M177 227h64v57h-64zM270 227h71v57h-71z" fill="#1687a1" opacity=".72"/>
+  <circle cx="256" cy="139" r="11" fill="#f4c979"/>
+</svg>

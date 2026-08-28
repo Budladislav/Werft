@@ -1,0 +1,74 @@
+{
+  "id": "/",
+  "name": "Верфь — центр проектов",
+  "short_name": "Верфь",
+  "description": "Личный центр управления, обслуживания и развития экосистемы проектов.",
+  "lang": "ru",
+  "dir": "ltr",
+  "start_url": "/start",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#07151c",
+  "theme_color": "#07151c",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/icons/werft-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/werft-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/werft-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/werft.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/werft-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Док",
+      "short_name": "Док",
+      "description": "Быстрый запуск приложений",
+      "url": "/dock",
+      "icons": [{ "src": "/icons/werft-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Обзор",
+      "short_name": "Обзор",
+      "description": "Состояние всей экосистемы",
+      "url": "/overview",
+      "icons": [{ "src": "/icons/werft-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Идеи",
+      "short_name": "Идеи",
+      "description": "Ячейки будущих проектов",
+      "url": "/ideas",
+      "icons": [{ "src": "/icons/werft-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ],
+  "launch_handler": {
+    "client_mode": ["navigate-existing", "auto"]
+  }
+}

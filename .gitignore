@@ -1,0 +1,38 @@
+# dependencies
+/node_modules
+
+# next
+/.next/
+/out/
+
+# production
+/build
+
+# testing
+/coverage
+/playwright-report
+/test-results
+
+# environment
+.env*
+!.env.example
+
+# local deployment metadata and exports
+/.vercel/
+*.werft-backup
+*.key
+*.p12
+*.pfx
+
+# local
+.DS_Store
+Thumbs.db
+*.pem
+*.log
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# generated temporary files
+/.tmp/

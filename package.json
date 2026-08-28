@@ -1,0 +1,44 @@
+{
+  "name": "werft",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "dev:host": "next dev --turbopack --hostname 0.0.0.0",
+    "build": "npm run release:generate && next build",
+    "start": "next start",
+    "lint": "eslint --max-warnings=0",
+    "typecheck": "next typegen && tsc --noEmit --incremental false",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "pwa:icons": "node scripts/generate-pwa-icons.mjs",
+    "release:generate": "node scripts/generate-release-history.mjs",
+    "release:check": "node scripts/check-release.mjs",
+    "check": "npm run release:check && npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "dexie": "4.4.5",
+    "dexie-react-hooks": "4.2.0",
+    "next": "16.3.3",
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.2",
+    "@types/node": "22.10.2",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.4",
+    "eslint": "9.39.2",
+    "eslint-config-next": "16.3.3",
+    "fake-indexeddb": "6.2.5",
+    "jsdom": "26.1.0",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
+  }
+}

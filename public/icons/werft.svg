@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Верфь</title>
+  <defs>
+    <linearGradient id="sea" x1="98" y1="78" x2="414" y2="438" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#25d1b2"/>
+      <stop offset="1" stop-color="#1687a1"/>
+    </linearGradient>
+    <linearGradient id="hull" x1="156" y1="200" x2="360" y2="374" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f4c979"/>
+      <stop offset="1" stop-color="#df8b48"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#07151c"/>
+  <circle cx="256" cy="256" r="174" fill="#0d2832" stroke="#17414d" stroke-width="12"/>
+  <path d="M92 352c48-24 84-24 128 0s80 24 128 0 76-24 92-14v52c-31-3-55 5-82 20-56 30-101 30-158-1-38-21-68-22-108-4z" fill="url(#sea)"/>
+  <path d="M135 295h242l-35 76H171z" fill="url(#hull)" stroke="#ffd997" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M256 116v181M256 140l103 80H256M239 153l-80 67h80" fill="none" stroke="#ecf8f6" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M162 220h76v67h-76zM272 220h84v67h-84z" fill="#1687a1" opacity=".72"/>
+  <circle cx="256" cy="116" r="13" fill="#f4c979"/>
+</svg>
