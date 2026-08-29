@@ -25,6 +25,7 @@ Flow остаётся вне очереди до отдельного threat mod
 ## M2 — синхронизация между устройствами
 
 - Минимальный single-owner backend, server-side database и encrypted transport.
+- Owner authentication и закрытый namespace `/app/*`; пользователь по-прежнему один.
 - Pull по cursor, push из outbox, stable IDs/revisions/tombstones.
 - Conflict inbox вместо last-write-wins для notes, maintenance и ideas.
 - Device registry, export-before-migration, audit log и возможность полностью отключить sync.
@@ -39,7 +40,7 @@ Flow остаётся вне очереди до отдельного threat mod
 
 ## M4 — публичная витрина
 
-- Отдельный deployment и дизайн «спущенных на воду кораблей».
+- Публичный маршрут `/showcase` и дизайн «спущенных на воду кораблей»; при необходимости он выносится в отдельный deployment без изменения контракта данных.
 - Только explicit allowlist полей `publicProfile`: icon, tagline, short description, platforms, highlights и публичные ссылки.
 - Build-time sanitized artifact; никаких runtime-запросов к private базе Верфи.
 - Preview/diff перед публикацией, per-project enable switch, проверка URL и секретов.

@@ -2,6 +2,13 @@
 
 Этот документ фиксирует одно-владелецкий production-контур Верфи: публичный GitHub-репозиторий, Vercel-origin и read-only GitHub App.
 
+Текущий production:
+
+- приложение: `https://werft.vercel.app`;
+- Vercel project: `budladislavs-projects/werft`;
+- GitHub App: `budladislav-werft`;
+- production branch: `main`.
+
 ## 1. GitHub repository
 
 - Repository: `Budladislav/Werft`, visibility `public`, default branch `main`.
@@ -15,7 +22,7 @@
 2. Project name: `werft`, если имя доступно. Production branch: `main`.
 3. Framework preset: Next.js. Root directory: `./`. Install, build и output commands не переопределять.
 4. Node.js фиксируется в `package.json` как `22.x`.
-5. Выполнить первый deploy и записать стабильный production-origin вида `https://<project>.vercel.app`.
+5. Выполнить первый deploy и записать стабильный production-origin. Для текущего контура это `https://werft.vercel.app`.
 
 Первый deploy может работать без GitHub OAuth: в настройках интеграция будет отмечена как не настроенная. После получения стабильного origin нужно создать GitHub App и повторить deploy с environment variables.
 
@@ -24,9 +31,9 @@
 Создать GitHub App в **GitHub Settings → Developer settings → GitHub Apps → New GitHub App**.
 
 - GitHub App name: уникальное имя, например `Budladislav Werft`.
-- Homepage URL: `<production-origin>`.
-- Callback URL: `<production-origin>/auth/github/callback`.
-- Setup URL: необязательно `<production-origin>/settings`.
+- Homepage URL: `https://werft.vercel.app`.
+- Callback URL: `https://werft.vercel.app/auth/github/callback`.
+- Setup URL: `https://werft.vercel.app/settings`.
 - Request user authorization during installation: off.
 - Device Flow: off.
 - Webhooks: inactive.
@@ -49,7 +56,7 @@ Private key не нужен. Верфь использует Client ID, Client S
 Добавить для Production:
 
 ```text
-WERFT_APP_ORIGIN=<production-origin>
+WERFT_APP_ORIGIN=https://werft.vercel.app
 GITHUB_APP_CLIENT_ID=<GitHub App Client ID>
 GITHUB_APP_CLIENT_SECRET=<GitHub App Client Secret>
 WERFT_SESSION_SECRET=<base64url-encoded 32-byte random key>
@@ -71,6 +78,8 @@ GITHUB_REPOSITORIES=Flow,Planer,safe-play,fitness-tracker,ChronoAtlas
 
 ## Граница доступа
 
-Production URL не является auth-wall. Любой посетитель получает собственную IndexedDB и очищенный seed, но не может увидеть локальные данные, заметки, backup-файлы или GitHub-сессию владельца. GitHub API дополнительно принимает только immutable owner id. Закрытый UI потребует отдельного owner-gateway.
+В MVP production URL не является auth-wall. Любой посетитель получает собственную IndexedDB и очищенный seed, но не может увидеть локальные данные, заметки, backup-файлы или GitHub-сессию владельца. GitHub API дополнительно принимает только immutable owner id.
+
+При появлении межустройственной синхронизации рабочий интерфейс переносится под owner-auth boundary (`/app/*`), а `/showcase` остаётся публичной очищенной проекцией. Авторизация нужна не только для конфиденциальности, но и для однозначной привязки серверного состояния к единственному владельцу.
 
 Официальные инструкции: [Vercel Git deployments](https://vercel.com/docs/git), [Vercel environment variables](https://vercel.com/docs/environment-variables), [регистрация GitHub App](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app), [установка GitHub App](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app).
