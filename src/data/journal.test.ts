@@ -8,6 +8,11 @@ import {
   journalRangeForPreset,
 } from "@/data/journal";
 import { seedProjects, seedReleases } from "@/data/seed";
+import {
+  WERFT_JOURNAL_PROJECT_ID,
+  werftJournalProject,
+  werftJournalReleases,
+} from "@/data/werft-journal";
 
 describe("cross-project journal export", () => {
   it("builds rolling seven and thirty day UTC ranges", () => {
@@ -62,5 +67,16 @@ describe("cross-project journal export", () => {
     expect(journalExportFilename("md", options)).toBe(
       "werft-journal_2026-08-27_2026-08-27.md",
     );
+  });
+
+  it("includes Werft releases in the same filter and export contract", () => {
+    const rows = filterJournalReleases(werftJournalReleases, {
+      projectIds: [WERFT_JOURNAL_PROJECT_ID],
+    });
+    expect(rows[0]).toMatchObject({ projectId: WERFT_JOURNAL_PROJECT_ID, version: "0.1.1" });
+
+    const markdown = createJournalMarkdown(rows, [werftJournalProject]);
+    expect(markdown).toContain("Верфь 0.1.1");
+    expect(markdown).toContain("Автосверка и единый журнал экосистемы");
   });
 });

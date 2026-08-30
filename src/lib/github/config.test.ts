@@ -39,7 +39,7 @@ describe("GitHub allowlist configuration", () => {
       ownerLogin: "Budladislav",
       ownerId: GITHUB_OWNER_ID,
       name: "Planer",
-      changelogPaths: ["CHANGELOG_MONOFOCUS.md", "CHANGELOG.md"],
+      changelogPaths: ["CHANGELOG.md", "CHANGELOG_MONOFOCUS.md"],
     }]);
   });
 });

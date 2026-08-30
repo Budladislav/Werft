@@ -74,3 +74,15 @@ export {
   applyGithubProjectSnapshot,
   applyGithubSyncEnvelope,
 } from "./github-sync";
+export {
+  AUTO_GITHUB_SYNC_TTL_MS,
+  autoSyncGithubIfStale,
+  latestSuccessfulGithubSyncAt,
+  shouldAutoSyncGithub,
+  syncGithubFromApi,
+} from "./github-auto-sync";
+export {
+  WERFT_JOURNAL_PROJECT_ID,
+  werftJournalProject,
+  werftJournalReleases,
+} from "./werft-journal";

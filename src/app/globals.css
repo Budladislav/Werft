@@ -290,8 +290,8 @@ button { color: inherit; }
 .dock-tile { --project-accent: var(--teal); position: relative; min-height: 230px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: linear-gradient(160deg, rgba(255,255,255,.55), rgba(251,250,245,.82)); box-shadow: 0 1px 0 rgba(255,255,255,.8); transition: transform .18s ease, box-shadow .18s ease; }
 .dock-tile::before { content: ""; position: absolute; inset: 0 0 auto; height: 3px; background: var(--project-accent); opacity: .78; }
 .dock-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
-.dock-launch { flex: 1; display: grid; align-content: center; justify-items: center; gap: 13px; padding: 27px 20px 19px; text-align: center; }
-.dock-launch::after { content: ""; position: absolute; width: 160px; height: 160px; border: 1px solid color-mix(in srgb, var(--project-accent), transparent 87%); border-radius: 50%; z-index: 0; }
+.dock-launch { position: relative; isolation: isolate; flex: 1; display: grid; align-content: center; justify-items: center; gap: 13px; padding: 27px 20px 19px; text-align: center; }
+.dock-launch::after { content: ""; position: absolute; left: 50%; top: 50%; width: 160px; height: 160px; border: 1px solid color-mix(in srgb, var(--project-accent), transparent 87%); border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); z-index: 0; }
 .dock-launch > * { position: relative; z-index: 1; }
 .dock-name { font-size: 17px; font-weight: 780; letter-spacing: -.03em; }
 .dock-meta { display: flex; align-items: center; gap: 7px; color: var(--ink-soft); font: 10px ui-monospace, monospace; }

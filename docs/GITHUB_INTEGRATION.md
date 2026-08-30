@@ -17,7 +17,7 @@
 1. Создать GitHub App у владельца репозиториев.
 2. Homepage URL: production origin Верфи.
 3. Callback URL: `<WERFT_APP_ORIGIN>/auth/github/callback`.
-4. Webhooks отключить для MVP.
+4. Webhooks оставить отключёнными до появления server-side хранилища наблюдений.
 5. Repository permissions: `Metadata: Read-only`, `Contents: Read-only`, `Actions: Read-only`; остальные — No access.
 6. Account permissions не запрашивать.
 7. Установить App только на пять перечисленных репозиториев.
@@ -43,6 +43,8 @@ Production должен использовать точный HTTPS origin. Prev
 | `POST /api/github/sync` | Возвращает `GithubSyncEnvelope`; частичная ошибка одного repo не стирает остальные |
 | `POST /api/github/logout` | Best-effort revoke token и удаление cookies |
 
+После запуска клиент проверяет возраст последней успешной сверки. Если срез старше 15 минут и OAuth-сессия активна, тот же `POST /api/github/sync` выполняется в фоне; интерфейс сначала открывается из IndexedDB и обновляется реактивно после ответа.
+
 Session cookie: AES-256-GCM, HttpOnly, SameSite=Lax, Secure в production, TTL не больше 8 часов. API responses: `Cache-Control: private, no-store` и `Vary: Cookie`. POST endpoints отклоняют известный чужой Origin/Referer; SameSite cookie закрывает cross-site POST без этих заголовков.
 
 ## Что синхронизируется
@@ -56,3 +58,7 @@ GitHub — источник наблюдаемых технических фак
 Публичный репозиторий Верфи показывает реализацию, seed-названия проектов и URL. Он не даёт доступ к IndexedDB браузера, private Flow repository, GitHub token или Vercel environment variables. Такая граница сохраняется только если secrets и пользовательские exports не коммитятся, а публичная showcase строится из отдельной явной проекции.
 
 Service worker не перехватывает `/api` и `/auth` и не кеширует responses с `private`/`no-store`. При подозрении на утечку нужно отозвать GitHub App secret/token, сменить `WERFT_SESSION_SECRET` и проверить deployment logs.
+
+## Почему webhook пока не включён
+
+GitHub webhook приходит на сервер Vercel, когда браузер может быть закрыт. В MVP наблюдения хранятся только в IndexedDB конкретного устройства, поэтому webhook некуда безопасно записать и он не способен обновить локальный журнал. Публичный commit-снимок неприемлем для private Flow, а расширять read-only GitHub App правами записи ради обходного пути нельзя. Webhook подключается после появления owner-auth и server-side cache в M2/M3; до этого автосверка при открытии даёт честную и предсказуемую свежесть.

@@ -9,6 +9,8 @@ import {
   journalRangeForPreset,
   useProjects,
   useReleases,
+  werftJournalProject,
+  werftJournalReleases,
 } from "@/data";
 import { Icon } from "@/components/icons";
 import { EmptyState, LoadingPanel, PageHeader, ProjectAvatar, StatusPill, downloadText, formatDate } from "@/components/ui";
@@ -33,6 +35,14 @@ export default function JournalPage() {
   const monthAgo = new Date(now.getTime() - 30 * 86_400_000).toISOString().slice(0, 10);
   const [from, setFrom] = useState(monthAgo);
   const [to, setTo] = useState(today);
+  const journalProjects = useMemo(
+    () => projects ? [werftJournalProject, ...projects] : [],
+    [projects],
+  );
+  const journalReleases = useMemo(
+    () => releases ? [...releases, ...werftJournalReleases] : [],
+    [releases],
+  );
 
   const range = useMemo(() => {
     if (period === "all") return {};
@@ -41,23 +51,22 @@ export default function JournalPage() {
   }, [from, now, period, to]);
 
   const filtered = useMemo(() => {
-    if (!releases) return [];
-    return filterJournalReleases(releases, {
+    return filterJournalReleases(journalReleases, {
       ...range,
       projectIds: projectId === "all" ? undefined : [projectId],
     });
-  }, [projectId, range, releases]);
+  }, [journalReleases, projectId, range]);
 
   if (!projects || !releases) return <LoadingPanel label="Собираем сквозной журнал…" />;
 
   function exportMarkdown() {
     const options = { ...range, generatedAt: now.toISOString() };
-    downloadText(journalExportFilename("md", range), createJournalMarkdown(filtered, projects!, options), "text/markdown;charset=utf-8");
+    downloadText(journalExportFilename("md", range), createJournalMarkdown(filtered, journalProjects, options), "text/markdown;charset=utf-8");
   }
 
   function exportJson() {
     const options = { ...range, generatedAt: now.toISOString() };
-    downloadText(journalExportFilename("json", range), createJournalJson(filtered, projects!, options), "application/json");
+    downloadText(journalExportFilename("json", range), createJournalJson(filtered, journalProjects, options), "application/json");
   }
 
   const changes = filtered.reduce((count, release) => count + release.entries.length, 0);
@@ -78,7 +87,7 @@ export default function JournalPage() {
             {([ ["week", "Неделя"], ["month", "Месяц"], ["all", "Всё"], ["custom", "Даты"] ] as const).map(([value, label]) => <button key={value} className={period === value ? "is-active" : ""} onClick={() => setPeriod(value)}>{label}</button>)}
           </div>
         </div>
-        <label className="field journal-project-filter"><span>Проект</span><select className="select" value={projectId} onChange={event => setProjectId(event.target.value)}><option value="all">Все проекты</option>{projects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
+        <label className="field journal-project-filter"><span>Проект</span><select className="select" value={projectId} onChange={event => setProjectId(event.target.value)}><option value="all">Все проекты</option>{journalProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
         {period === "custom" ? <div className="date-range"><label className="field"><span>С даты</span><input className="input" type="date" value={from} max={to} onInput={event => setFrom(event.currentTarget.value)} /></label><span>→</span><label className="field"><span>По дату</span><input className="input" type="date" value={to} min={from} onInput={event => setTo(event.currentTarget.value)} /></label></div> : null}
         <div className="journal-count"><strong>{filtered.length}</strong><span>релизов</span><i /> <strong>{changes}</strong><span>изменений</span></div>
       </section>
@@ -86,7 +95,7 @@ export default function JournalPage() {
       {filtered.length ? (
         <section className="journal-feed section-gap">
           {filtered.map((release, index) => {
-            const project = projects.find(item => item.id === release.projectId);
+            const project = journalProjects.find(item => item.id === release.projectId);
             if (!project) return null;
             return (
               <article className="journal-entry panel" key={release.id} style={{ "--project-accent": project.accent } as React.CSSProperties}>

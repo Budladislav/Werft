@@ -3,6 +3,7 @@ export type GithubReleaseCategory = "added" | "changed" | "fixed" | "security" |
 export type NormalizedGithubRelease = {
   version: string;
   releasedAt: string;
+  title: string | null;
   entries: Array<{
     category: GithubReleaseCategory;
     text: string;

@@ -60,6 +60,7 @@ describe("normalized GitHub ingestion", () => {
           {
             version: "3.2.0",
             releasedAt: "2026-08-29",
+            title: "Rewards Lab и грейды задач",
             entries: [{ category: "added", text: "Новый быстрый ввод." }],
           },
         ],
@@ -96,6 +97,7 @@ describe("normalized GitHub ingestion", () => {
       await database.releases.get(`release:${projectIds.monoFocus}:3.2.0`),
     ).toMatchObject({
       version: "3.2.0",
+      title: "Rewards Lab и грейды задач",
       source: "changelog",
     });
     expect(await database.syncEvents.where("projectId").equals(projectIds.monoFocus).count()).toBe(2);

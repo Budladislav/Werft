@@ -2,7 +2,7 @@ export const GITHUB_OWNER_ID = 46_434_977;
 export const DEFAULT_GITHUB_OWNER_LOGIN = "Budladislav";
 export const GITHUB_REPOSITORY_CATALOG = [
   { name: "Flow", changelogPaths: ["CHANGELOG.md"] },
-  { name: "Planer", changelogPaths: ["CHANGELOG_MONOFOCUS.md", "CHANGELOG.md"] },
+  { name: "Planer", changelogPaths: ["CHANGELOG.md", "CHANGELOG_MONOFOCUS.md"] },
   { name: "safe-play", changelogPaths: ["CHANGELOG.md"] },
   { name: "fitness-tracker", changelogPaths: ["CHANGELOG.md"] },
   { name: "ChronoAtlas", changelogPaths: ["CHANGELOG.md"] },

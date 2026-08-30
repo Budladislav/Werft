@@ -909,7 +909,7 @@ export const seedMaintenanceRules: MaintenanceRule[] = [
     projectId: projectIds.monoFocus,
     title: "Унифицировать release contract MonoFocus",
     description:
-      "Перенести changelog к общему имени/ISO-датам и включить production build в единую команду check.",
+      "Перенести changelog к общему имени и включить production build в единую команду check.",
     kind: "quality",
     dueAt: "2026-09-15T00:00:00.000Z",
     status: "upcoming",
@@ -1019,7 +1019,7 @@ const assessments: Record<string, Record<string, AssessmentSpec>> = {
     "release.canonical-changelog": {
       result: "warning",
       evidence: "История находится в CHANGELOG_MONOFOCUS.md и использует DD.MM.YYYY.",
-      remediation: "Перейти на CHANGELOG.md и ISO YYYY-MM-DD.",
+      remediation: "Перейти на корневой CHANGELOG.md; формат даты уже соответствует стандарту.",
     },
     "quality.check-command": {
       result: "action-required",

@@ -185,6 +185,7 @@ export async function applyGithubProjectSnapshot(
           version: item.version,
           releasedAt,
           title:
+            item.title ??
             existing?.title ??
             (releaseIndex === 0
               ? `Актуальный релиз ${item.version}`

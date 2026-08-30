@@ -1,7 +1,12 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-const RELEASE_HEADING = /^##\s+\[?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)\]?\s*(?:—|-)\s*(\d{4}-\d{2}-\d{2})\s*$/;
+const RELEASE_HEADING = /^##\s+\[?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)\]?\s*(?:—|-)\s*(\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})(?:\s+(?:—|-)\s+(.+?))?\s*$/;
+
+function normalizeReleaseDate(value) {
+  const legacy = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+  return legacy ? `${legacy[3]}-${legacy[2]}-${legacy[1]}` : value;
+}
 
 export async function readReleaseSource(rootDirectory) {
   const changelog = await readFile(path.join(rootDirectory, "CHANGELOG.md"), "utf8");
@@ -19,7 +24,8 @@ export function parseReleaseHistory(changelog) {
     if (release) {
       currentRelease = {
         version: release[1],
-        releasedAt: release[2],
+        releasedAt: normalizeReleaseDate(release[2]),
+        title: release[3]?.trim() || null,
         sections: [],
       };
       releases.push(currentRelease);
@@ -58,6 +64,7 @@ export function buildGeneratedReleaseModule(releases) {
 export type AppReleaseHistoryEntry = {
   version: string;
   releasedAt: string;
+  title: string | null;
   sections: Array<{ title: string; items: string[] }>;
 };
 

@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
-  applyGithubSyncEnvelope,
   parseWerftBackup,
   restoreWerftBackup,
   serializeWerftBackup,
   setStartView,
+  syncGithubFromApi,
   useProjects,
   useStartView,
   werftBackupFilename,
@@ -14,7 +14,6 @@ import {
 import { Icon, WerftMark } from "@/components/icons";
 import { LoadingPanel, PageHeader, Panel, StatusPill, downloadText, formatDate } from "@/components/ui";
 import { APP_VERSION } from "@/lib/domain";
-import type { GithubSyncEnvelope } from "@/lib/github/types";
 import { APP_RELEASE_HISTORY } from "@/lib/release-history.generated";
 
 type GithubStatus = {
@@ -112,10 +111,7 @@ export default function SettingsPage() {
     setSyncing(true);
     setGithubError(undefined);
     try {
-      const response = await fetch("/api/github/sync", { method: "POST", headers: { "content-type": "application/json" } });
-      const payload = await response.json() as GithubSyncEnvelope | { error?: string };
-      if (!response.ok || !("projects" in payload)) throw new Error("error" in payload ? payload.error : "GitHub sync failed");
-      const result = await applyGithubSyncEnvelope(payload);
+      const { envelope: payload, result } = await syncGithubFromApi();
       setGithubError(`Обновлено проектов: ${result.updatedProjectIds.length}${result.errors.length ? ` · ошибок: ${result.errors.length}` : ""}.`);
       setGithub(status => status ? { ...status, repositories: payload.projects.map(item => item.repository.fullName) } : status);
     } catch (error) {
@@ -158,7 +154,7 @@ export default function SettingsPage() {
             {dataMessage ? <div className="inline-message"><Icon name="check" />{dataMessage}</div> : null}
           </Panel>
 
-          <Panel title="GitHub · только чтение" description="Приватный серверный мост; токен не попадает в браузер">
+          <Panel title="GitHub · только чтение" description="Автосверка при запуске, если срез старше 15 минут">
             <div className="github-settings">
               <span className="github-mark"><Icon name="github" /></span>
               <div className="github-copy">
@@ -203,6 +199,7 @@ function VersionDialog({ onClose }: { onClose: () => void }) {
             {APP_RELEASE_HISTORY.map((release, index) => (
               <article className="version-release" key={release.version}>
                 <div className="row-between"><span className={`status-pill ${index === 0 ? "good" : "neutral"}`}>Версия {release.version}</span><time>{release.releasedAt}</time></div>
+                {release.title ? <h3>{release.title}</h3> : null}
                 {release.sections.map(section => <section key={section.title}><h3>{section.title}</h3><ul>{section.items.map(item => <li key={item}><Icon name="check" />{item}</li>)}</ul></section>)}
               </article>
             ))}

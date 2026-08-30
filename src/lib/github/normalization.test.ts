@@ -9,12 +9,12 @@ import {
 } from "./normalization";
 
 describe("GitHub repository normalization", () => {
-  it("parses Russian and Keep a Changelog release headings", () => {
+  it("parses the Werft date/title format and legacy ISO headings", () => {
     const parsed = parseChangelog(`# История изменений
 
 ## [Unreleased]
 
-## [2.4.1] — 2026-08-09
+## [2.4.1] — 09.08.2026 — Надёжные резервные копии
 
 ### Добавлено
 - Полный JSON-экспорт.
@@ -31,6 +31,7 @@ describe("GitHub repository normalization", () => {
       {
         version: "2.4.1",
         releasedAt: "2026-08-09",
+        title: "Надёжные резервные копии",
         entries: [
           { category: "added", text: "Полный JSON-экспорт." },
           { category: "fixed", text: "Исправлено восстановление." },
@@ -39,9 +40,23 @@ describe("GitHub repository normalization", () => {
       {
         version: "2.4.0",
         releasedAt: "2026-07-26",
+        title: null,
         entries: [{ category: "other", text: "Предыдущая версия." }],
       },
     ]);
+  });
+
+  it("normalizes the legacy MonoFocus date format", () => {
+    const parsed = parseChangelog(`## 3.2.0 — 29.08.2026
+- Добавлен Rewards Lab.
+`);
+
+    expect(parsed.releases).toEqual([{
+      version: "3.2.0",
+      releasedAt: "2026-08-29",
+      title: null,
+      entries: [{ category: "other", text: "Добавлен Rewards Lab." }],
+    }]);
   });
 
   it("extracts a canonical package version and dependencies", () => {

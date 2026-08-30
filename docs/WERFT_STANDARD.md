@@ -12,7 +12,7 @@ Werft Standard — версия технического ориентира дл
 
 ### `release.canonical-changelog` — канонический changelog
 
-Корневой `CHANGELOG.md` содержит semantic version и ISO release date; встроенная история приложения строится из него. Для унаследованного пути допускается задокументированный adapter (например, MonoFocus), но новые проекты начинают с корневого файла.
+Корневой `CHANGELOG.md` содержит semantic version, дату `DD.MM.YYYY` и короткое название релиза; встроенная история приложения строится из него. Канонический заголовок: `## [3.2.0] — 29.08.2026 — Rewards Lab и грейды задач`. Для унаследованного пути допускается задокументированный adapter (например, MonoFocus), но новые проекты начинают с корневого файла. Старые ISO-даты читаются для совместимости, но новые записи используют единый формат экосистемы.
 
 ### `quality.check-command` — единый quality gate
 
@@ -46,7 +46,7 @@ Manifest, icons, start URL, update strategy, offline fallback и safe-area layou
 
 ## Как внедрять в будущий проект
 
-1. Создать root `CHANGELOG.md`, единую version constant и `check` ещё до первого релиза.
+1. Создать root `CHANGELOG.md` по [контракту подключения](PROJECT_ONBOARDING.md), единую version constant и `check` ещё до первого релиза.
 2. Заполнить data classification и backup contract до появления значимых пользовательских данных.
 3. Добавить install/deploy/restore инструкции, не полагающиеся на память автора.
 4. Подключить CI и зафиксировать доказательства в Верфи.

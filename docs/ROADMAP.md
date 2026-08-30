@@ -9,6 +9,7 @@
 - IndexedDB, private notes, versioned full export/import и outbox-ready entity metadata.
 - Werft Standard v1 и начальная quality matrix.
 - Single-owner read-only GitHub sync и release-history automation.
+- Автосверка GitHub при открытии с TTL; ручная кнопка остаётся принудительным обновлением.
 - Flow отмечен excluded/sensitive во всех backup-поверхностях.
 
 ## M1 — реальные backup-адаптеры

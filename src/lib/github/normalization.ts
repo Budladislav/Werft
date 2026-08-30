@@ -75,7 +75,7 @@ type PackageManifest = {
 };
 
 const SEMVER_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
-const RELEASE_HEADING = /^##\s+\[?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)\]?\s*(?:—|-)\s*(\d{4}-\d{2}-\d{2})\s*$/i;
+const RELEASE_HEADING = /^##\s+\[?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)\]?\s*(?:—|-)\s*(\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})(?:\s+(?:—|-)\s+(.+?))?\s*$/i;
 const UNRELEASED_HEADING = /^##\s+\[?(?:unreleased|невыпущено|в разработке)\]?\s*$/i;
 
 const DEPENDENCY_STACK: Array<[RegExp, string]> = [
@@ -95,6 +95,11 @@ const DEPENDENCY_STACK: Array<[RegExp, string]> = [
 function cleanVersion(value: string | null | undefined): string | null {
   const candidate = value?.trim().replace(/^v/i, "") ?? "";
   return SEMVER_PATTERN.test(candidate) ? candidate : null;
+}
+
+function normalizeReleaseDate(value: string): string {
+  const legacy = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+  return legacy ? `${legacy[3]}-${legacy[2]}-${legacy[1]}` : value;
 }
 
 export function parsePackageManifest(text: string | undefined): PackageManifest {
@@ -150,7 +155,8 @@ export function parseChangelog(markdown: string | undefined): {
     if (releaseMatch) {
       current = {
         version: releaseMatch[1],
-        releasedAt: releaseMatch[2],
+        releasedAt: normalizeReleaseDate(releaseMatch[2]),
+        title: releaseMatch[3]?.trim() || null,
         entries: [],
       };
       releases.push(current);
@@ -312,10 +318,10 @@ export function normalizeGithubRepository(
   observedAt = new Date().toISOString(),
 ): NormalizedGithubProject {
   const manifest = parsePackageManifest(snapshot.files["package.json"]);
-  const changelogPath = snapshot.files["CHANGELOG_MONOFOCUS.md"]
-    ? "CHANGELOG_MONOFOCUS.md"
-    : snapshot.files["CHANGELOG.md"]
-      ? "CHANGELOG.md"
+  const changelogPath = snapshot.files["CHANGELOG.md"]
+    ? "CHANGELOG.md"
+    : snapshot.files["CHANGELOG_MONOFOCUS.md"]
+      ? "CHANGELOG_MONOFOCUS.md"
       : null;
   const parsedChangelog = parseChangelog(changelogPath ? snapshot.files[changelogPath] : undefined);
   const data = inferDataProfile(snapshot.files, snapshot.treePaths, manifest.dependencies);
