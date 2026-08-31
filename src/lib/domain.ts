@@ -1,4 +1,4 @@
-export const APP_VERSION = "0.1.3";
+export const APP_VERSION = "0.1.4";
 export const BACKUP_FORMAT = "werft-backup";
 export const BACKUP_SCHEMA_VERSION = 1;
 

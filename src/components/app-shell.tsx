@@ -22,16 +22,6 @@ const operations: NavItem[] = [
 const system: NavItem[] = [{ href: "/settings", label: "Настройки", icon: "settings" }];
 const allItems = [...primary, ...operations, ...system];
 
-const pageNames: Record<string, string> = {
-  overview: "Обзор верфи",
-  dock: "Быстрый док",
-  projects: "Библиотека проектов",
-  journal: "Сквозной журнал",
-  maintenance: "Обслуживание",
-  ideas: "Конструкторское бюро",
-  settings: "Настройки",
-};
-
 function isActive(pathname: string, href: string) {
   return pathname === href || (href === "/projects" && pathname.startsWith("/projects/"));
 }
@@ -53,8 +43,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   if (pathname === "/start") return children;
 
-  const firstSegment = pathname.split("/").filter(Boolean)[0] ?? "overview";
-  const title = pageNames[firstSegment] ?? "Верфь";
+  const menuActive = menuOpen || [...operations, ...system].some(item => isActive(pathname, item.href));
 
   return (
     <div className="app-shell">
@@ -85,13 +74,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </aside>
 
       <div className="workspace">
-        <header className="mobile-header">
-          <Link href="/overview" className="mobile-brand"><WerftMark />Верфь</Link>
-          <span className="mobile-title">{title}</span>
-          <button className="icon-button" aria-label="Открыть меню" onClick={() => setMenuOpen(true)}>
-            <Icon name="menu" />
-          </button>
-        </header>
         <main className="page-frame">{children}</main>
       </div>
 
@@ -101,14 +83,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Icon name={item.icon} /><span>{item.shortLabel ?? item.label}</span>
           </Link>
         ))}
-        <Link href="/maintenance" className={isActive(pathname, "/maintenance") ? "is-active" : ""}>
-          <Icon name="maintenance" /><span>Сервис</span>
-        </Link>
+        <button
+          type="button"
+          className={menuActive ? "is-active" : ""}
+          aria-label="Открыть меню"
+          aria-haspopup="dialog"
+          aria-expanded={menuOpen}
+          aria-controls="mobile-navigation-sheet"
+          onClick={() => setMenuOpen(true)}
+        >
+          <Icon name="menu" /><span>Меню</span>
+        </button>
       </nav>
 
       {menuOpen && (
         <div className="sheet-backdrop" role="presentation" onClick={() => setMenuOpen(false)}>
-          <aside className="mobile-sheet" role="dialog" aria-modal="true" aria-label="Навигация" onClick={event => event.stopPropagation()}>
+          <aside id="mobile-navigation-sheet" className="mobile-sheet" role="dialog" aria-modal="true" aria-label="Навигация" onClick={event => event.stopPropagation()}>
             <div className="sheet-head">
               <div><p className="eyebrow">Навигация</p><h2>Куда направляемся?</h2></div>
               <button className="icon-button" aria-label="Закрыть меню" onClick={() => setMenuOpen(false)}><Icon name="close" /></button>

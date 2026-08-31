@@ -6,6 +6,14 @@
 
 ## [Unreleased]
 
+## [0.1.4] — 31.08.2026 — Мобильная навигация без второй шапки
+
+### Изменено
+
+- На мобильных экранах удалена дублирующая шапка Верфи: контент начинается сразу под системной панелью Android.
+- Бургер-меню перенесено в нижнюю навигацию вместо прямой кнопки «Сервис»; обслуживание, идеи и настройки доступны в общей панели меню.
+- Практика-кандидат Werft Standard дополнена правилом не дублировать обязательную системную панель декоративной шапкой приложения.
+
 ## [0.1.3] — 31.08.2026 — Контрастная системная шапка Android
 
 ### Изменено
@@ -63,7 +71,8 @@
 - Публичные seed-данные приватного Flow очищены от внутренних идентификаторов, путей и деталей уязвимого restore-процесса.
 - Локальные Vercel-метаданные, ключи и `.werft-backup` исключены из Git.
 
-[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/Budladislav/Werft/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/Budladislav/Werft/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/Budladislav/Werft/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Budladislav/Werft/compare/v0.1.0...v0.1.1
