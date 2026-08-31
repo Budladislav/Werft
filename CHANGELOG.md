@@ -6,6 +6,17 @@
 
 ## [Unreleased]
 
+## [0.1.3] — 31.08.2026 — Контрастная системная шапка Android
+
+### Изменено
+
+- Мобильная шапка продолжает тёмный фон системной панели Android, чтобы две области воспринимались как единая поверхность.
+- Практика-кандидат Werft Standard уточнена по результату проверки светлой схемы на Pixel 11 Pro.
+
+### Исправлено
+
+- Возвращён тёмный `theme-color` и убран принудительный светлый `color-scheme`, из-за которого часы и индикаторы становились чёрными на тёмной системной панели.
+
 ## [0.1.2] — 31.08.2026 — Мобильный экспорт и цельная системная шапка
 
 ### Добавлено
@@ -52,7 +63,8 @@
 - Публичные seed-данные приватного Flow очищены от внутренних идентификаторов, путей и деталей уязвимого restore-процесса.
 - Локальные Vercel-метаданные, ключи и `.werft-backup` исключены из Git.
 
-[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/Budladislav/Werft/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/Budladislav/Werft/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Budladislav/Werft/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Budladislav/Werft/releases/tag/v0.1.0

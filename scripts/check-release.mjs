@@ -32,6 +32,9 @@ const documentThemeColor = layout.match(/themeColor:\s*"([^"]+)"/)?.[1];
 if (!documentThemeColor || manifest.theme_color !== documentThemeColor) {
   problems.push(`manifest theme_color ${manifest.theme_color ?? "missing"} does not match document themeColor ${documentThemeColor ?? "missing"}`);
 }
+if (documentThemeColor?.toLowerCase() === "#07151c" && /colorScheme:\s*"light"/.test(layout)) {
+  problems.push("dark Android PWA chrome must not force a light colorScheme");
+}
 if (!/viewportFit:\s*"cover"/.test(layout)) {
   problems.push("viewportFit cover is required for safe-area aware installed PWA layouts");
 }
