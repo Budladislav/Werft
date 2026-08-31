@@ -1,6 +1,6 @@
 /* Верфь service worker: static assets only; private and authenticated responses are never cached. */
-const CACHE_NAME = "werft-static-v0.1.1";
-const ROUTE_CACHE_NAME = "werft-routes-v0.1.1";
+const CACHE_NAME = "werft-static-v0.1.2";
+const ROUTE_CACHE_NAME = "werft-routes-v0.1.2";
 const PRECACHE = [
   "/offline.html",
   "/manifest.webmanifest",

@@ -44,6 +44,14 @@ Backup имеет format, schemaVersion, appVersion, exportedAt и checksum; д�
 
 Manifest, icons, start URL, update strategy, offline fallback и safe-area layout проверены на целевом мобильном размере. Критический пользовательский путь не должен зависеть от случайно прогретого service-worker cache.
 
+Экспериментальная практика Android status bar, кандидат для следующей версии стандарта:
+
+- `theme_color` в manifest и `<meta name="theme-color">` используют один непрозрачный цвет верхней поверхности приложения;
+- `viewport-fit=cover` включён, а закреплённые верхние/нижние панели учитывают `env(safe-area-inset-*)`;
+- `background_color` рассматривается отдельно как цвет splash screen и не обязан совпадать с рабочей шапкой;
+- изменение проверяется именно в заново запущенной установленной PWA на физическом Android-устройстве, при необходимости после обновления manifest или переустановки;
+- практика станет обязательной только после проверки пилота Верфи на Pixel 11 Pro.
+
 ## Как внедрять в будущий проект
 
 1. Создать root `CHANGELOG.md` по [контракту подключения](PROJECT_ONBOARDING.md), единую version constant и `check` ещё до первого релиза.

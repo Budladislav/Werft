@@ -77,7 +77,6 @@ export default function JournalPage() {
         eyebrow="Общий ход работ"
         title="Сквозной журнал"
         description="Релизы всех проектов в одной хронологии — с выгрузкой для отчёта или архива."
-        actions={<><button className="button" onClick={exportJson}><Icon name="download" /> JSON</button><button className="button primary" onClick={exportMarkdown}><Icon name="download" /> Markdown</button></>}
       />
 
       <section className="journal-toolbar panel">
@@ -90,6 +89,13 @@ export default function JournalPage() {
         <label className="field journal-project-filter"><span>Проект</span><select className="select" value={projectId} onChange={event => setProjectId(event.target.value)}><option value="all">Все проекты</option>{journalProjects.map(project => <option key={project.id} value={project.id}>{project.name}</option>)}</select></label>
         {period === "custom" ? <div className="date-range"><label className="field"><span>С даты</span><input className="input" type="date" value={from} max={to} onInput={event => setFrom(event.currentTarget.value)} /></label><span>→</span><label className="field"><span>По дату</span><input className="input" type="date" value={to} min={from} onInput={event => setTo(event.currentTarget.value)} /></label></div> : null}
         <div className="journal-count"><strong>{filtered.length}</strong><span>релизов</span><i /> <strong>{changes}</strong><span>изменений</span></div>
+        <div className="journal-export">
+          <span className="tool-label">Скачать выбранное</span>
+          <div>
+            <button className="button" disabled={!filtered.length} onClick={exportJson}><Icon name="download" /> JSON</button>
+            <button className="button primary" disabled={!filtered.length} onClick={exportMarkdown}><Icon name="download" /> Markdown</button>
+          </div>
+        </div>
       </section>
 
       {filtered.length ? (

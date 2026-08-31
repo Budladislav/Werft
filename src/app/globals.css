@@ -415,6 +415,9 @@ button { color: inherit; }
 .journal-count { margin-left: auto; display: grid; grid-template-columns: auto auto 1px auto auto; align-items: baseline; gap: 5px; color: var(--ink-soft); font-size: 9px; }
 .journal-count strong { color: var(--ink); font-size: 18px; }
 .journal-count i { height: 22px; width: 1px; margin: 0 5px; background: var(--line); }
+.journal-export { display: grid; gap: 7px; }
+.journal-export .tool-label { margin: 0; }
+.journal-export > div { display: flex; gap: 7px; }
 .journal-feed { display: grid; gap: 10px; }
 .journal-entry { --project-accent: var(--teal); display: grid; grid-template-columns: 73px 22px 1fr; min-height: 170px; overflow: hidden; }
 .journal-date { display: grid; align-content: start; justify-items: end; padding: 26px 4px 20px 16px; }
@@ -567,6 +570,9 @@ button { color: inherit; }
   .detail-grid { grid-template-columns: 1fr; }
   .journal-toolbar { align-items: stretch; flex-wrap: wrap; }
   .journal-count { margin-left: 0; align-self: center; }
+  .journal-export { width: 100%; padding-top: 13px; border-top: 1px solid var(--line); }
+  .journal-export > div { display: grid; grid-template-columns: minmax(0, .72fr) minmax(0, 1fr); }
+  .journal-export .button { width: 100%; }
   .ideas-intro { grid-template-columns: 1fr; }
   .idea-stage-legend { display: grid; grid-template-columns: repeat(4,1fr); }
 }

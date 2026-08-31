@@ -6,6 +6,17 @@
 
 ## [Unreleased]
 
+## [0.1.2] — 31.08.2026 — Мобильный экспорт и цельная системная шапка
+
+### Добавлено
+
+- Кнопки скачивания Markdown и JSON перенесены в панель фильтров сквозного журнала и остаются доступными на мобильных экранах.
+- В Werft Standard добавлена проверяемая практика-кандидат для системных панелей Android PWA.
+
+### Исправлено
+
+- Светлый `theme-color` совпадает с мобильной шапкой Верфи, чтобы установленная Android PWA не создавала отдельную чёрную полосу над интерфейсом.
+
 ## [0.1.1] — 30.08.2026 — Автосверка и единый журнал экосистемы
 
 ### Добавлено
@@ -41,6 +52,7 @@
 - Публичные seed-данные приватного Flow очищены от внутренних идентификаторов, путей и деталей уязвимого restore-процесса.
 - Локальные Vercel-метаданные, ключи и `.werft-backup` исключены из Git.
 
-[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/Budladislav/Werft/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/Budladislav/Werft/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Budladislav/Werft/releases/tag/v0.1.0

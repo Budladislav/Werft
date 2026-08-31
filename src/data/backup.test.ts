@@ -58,7 +58,7 @@ describe("Werft backup", () => {
     expect(envelope).toMatchObject({
       format: "werft-backup",
       schemaVersion: 1,
-      appVersion: "0.1.1",
+      appVersion: "0.1.2",
       exportedAt: "2026-08-28T12:00:00.000Z",
     });
     expect(envelope.checksum).toMatch(/^[a-f0-9]{64}$/u);
