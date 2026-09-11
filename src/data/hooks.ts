@@ -4,6 +4,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 
 import { standardControls } from "@/data/standard";
 import { werftDb } from "@/data/db";
+import { compareJournalReleaseRecency } from "@/data/journal";
 import { normalizeStartView } from "@/data/repository";
 
 const active = <T extends { deletedAt?: string }>(row: T) => !row.deletedAt;
@@ -40,7 +41,7 @@ export function useReleases(projectId?: string) {
       : await werftDb.releases.toArray();
     return rows
       .filter(active)
-      .sort((a, b) => b.releasedAt.localeCompare(a.releasedAt));
+      .sort(compareJournalReleaseRecency);
   }, [projectId]);
 }
 

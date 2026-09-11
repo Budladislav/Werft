@@ -42,6 +42,21 @@ describe("cross-project journal export", () => {
     );
   });
 
+  it("orders releases newest-first inside the same day", () => {
+    const source = seedReleases[0];
+    const rows = filterJournalReleases([
+      { ...source, id: "same-day-3.9.0", version: "3.9.0", releasedAt: "2026-09-11T00:00:00.000Z" },
+      { ...source, id: "same-day-3.10.0", version: "3.10.0", releasedAt: "2026-09-11T00:00:00.000Z" },
+      { ...source, id: "same-day-4.0.0", version: "4.0.0", releasedAt: "2026-09-11T00:00:00.000Z" },
+    ]);
+
+    expect(rows.map((release) => release.version)).toEqual([
+      "4.0.0",
+      "3.10.0",
+      "3.9.0",
+    ]);
+  });
+
   it("produces human-readable Markdown and machine-readable JSON", () => {
     const rows = filterJournalReleases(seedReleases, {
       from: "2026-08-27",
@@ -73,10 +88,10 @@ describe("cross-project journal export", () => {
     const rows = filterJournalReleases(werftJournalReleases, {
       projectIds: [WERFT_JOURNAL_PROJECT_ID],
     });
-    expect(rows[0]).toMatchObject({ projectId: WERFT_JOURNAL_PROJECT_ID, version: "0.1.4" });
+    expect(rows[0]).toMatchObject({ projectId: WERFT_JOURNAL_PROJECT_ID, version: "0.1.5" });
 
     const markdown = createJournalMarkdown(rows, [werftJournalProject]);
-    expect(markdown).toContain("Верфь 0.1.4");
-    expect(markdown).toContain("Мобильная навигация без второй шапки");
+    expect(markdown).toContain("Верфь 0.1.5");
+    expect(markdown).toContain("Правильный порядок релизов одного дня");
   });
 });

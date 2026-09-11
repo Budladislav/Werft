@@ -6,6 +6,13 @@
 
 ## [Unreleased]
 
+## [0.1.5] — 11.09.2026 — Правильный порядок релизов одного дня
+
+### Исправлено
+
+- Релизы с одинаковой датой внутри одного проекта сортируются от новой версии к старой, включая числовые сегменты вроде `3.10` и `3.9`.
+- Этот же порядок применяется в сквозном журнале, экспорте и журнале отдельного проекта.
+
 ## [0.1.4] — 31.08.2026 — Мобильная навигация без второй шапки
 
 ### Изменено
@@ -71,7 +78,8 @@
 - Публичные seed-данные приватного Flow очищены от внутренних идентификаторов, путей и деталей уязвимого restore-процесса.
 - Локальные Vercel-метаданные, ключи и `.werft-backup` исключены из Git.
 
-[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.4...HEAD
+[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/Budladislav/Werft/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/Budladislav/Werft/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/Budladislav/Werft/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/Budladislav/Werft/compare/v0.1.1...v0.1.2

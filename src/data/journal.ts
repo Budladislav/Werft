@@ -34,6 +34,28 @@ function isoDate(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+export function compareJournalReleaseRecency(
+  left: ProjectRelease,
+  right: ProjectRelease,
+) {
+  const releasedAtOrder = right.releasedAt.localeCompare(left.releasedAt);
+  if (releasedAtOrder !== 0) return releasedAtOrder;
+
+  if (left.projectId === right.projectId) {
+    const versionOrder = right.version.localeCompare(left.version, undefined, {
+      numeric: true,
+      sensitivity: "base",
+    });
+    if (versionOrder !== 0) return versionOrder;
+  }
+
+  return (
+    right.createdAt.localeCompare(left.createdAt) ||
+    left.projectId.localeCompare(right.projectId) ||
+    left.id.localeCompare(right.id)
+  );
+}
+
 export function journalRangeForPreset(
   preset: JournalPreset,
   now = new Date(),
@@ -78,7 +100,7 @@ export function filterJournalReleases(
         ? release.entries.filter((entry) => categories.has(entry.category))
         : release.entries,
     }))
-    .sort((a, b) => b.releasedAt.localeCompare(a.releasedAt));
+    .sort(compareJournalReleaseRecency);
 }
 
 function projectMap(projects: Project[]) {
