@@ -1,11 +1,15 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-const RELEASE_HEADING = /^##\s+\[?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)\]?\s*(?:—|-)\s*(\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})(?:\s+(?:—|-)\s+(.+?))?\s*$/;
+const RELEASE_HEADING = /^##\s+\[?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?)\]?\s*(?:—|-)\s*(\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})(?:[ T](\d{2}:\d{2}(?::\d{2})?)(?:\s*(Z|[+-]\d{2}:\d{2}))?)?(?:\s+(?:—|-)\s+(.+?))?\s*$/;
 
-function normalizeReleaseDate(value) {
+function normalizeReleaseDate(value, time, timezone) {
   const legacy = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-  return legacy ? `${legacy[3]}-${legacy[2]}-${legacy[1]}` : value;
+  const date = legacy ? `${legacy[3]}-${legacy[2]}-${legacy[1]}` : value;
+  if (!time) return date;
+  const normalizedTime = time.length === 5 ? `${time}:00` : time;
+  const timestamp = `${date}T${normalizedTime}${timezone ?? ""}`;
+  return timezone ? new Date(timestamp).toISOString() : timestamp;
 }
 
 export async function readReleaseSource(rootDirectory) {
@@ -24,8 +28,8 @@ export function parseReleaseHistory(changelog) {
     if (release) {
       currentRelease = {
         version: release[1],
-        releasedAt: normalizeReleaseDate(release[2]),
-        title: release[3]?.trim() || null,
+        releasedAt: normalizeReleaseDate(release[2], release[3], release[4]),
+        title: release[5]?.trim() || null,
         sections: [],
       };
       releases.push(currentRelease);

@@ -75,7 +75,7 @@ type PackageManifest = {
 };
 
 const SEMVER_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
-const RELEASE_HEADING = /^##\s+\[?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)\]?\s*(?:—|-)\s*(\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})(?:\s+(?:—|-)\s+(.+?))?\s*$/i;
+const RELEASE_HEADING = /^##\s+\[?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)\]?\s*(?:—|-)\s*(\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})(?:[ T](\d{2}:\d{2}(?::\d{2})?)(?:\s*(Z|[+-]\d{2}:\d{2}))?)?(?:\s+(?:—|-)\s+(.+?))?\s*$/i;
 const UNRELEASED_HEADING = /^##\s+\[?(?:unreleased|невыпущено|в разработке)\]?\s*$/i;
 
 const DEPENDENCY_STACK: Array<[RegExp, string]> = [
@@ -97,9 +97,17 @@ function cleanVersion(value: string | null | undefined): string | null {
   return SEMVER_PATTERN.test(candidate) ? candidate : null;
 }
 
-function normalizeReleaseDate(value: string): string {
+function normalizeReleaseDate(
+  value: string,
+  time?: string,
+  timezone?: string,
+): string {
   const legacy = value.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-  return legacy ? `${legacy[3]}-${legacy[2]}-${legacy[1]}` : value;
+  const date = legacy ? `${legacy[3]}-${legacy[2]}-${legacy[1]}` : value;
+  if (!time) return date;
+  const normalizedTime = time.length === 5 ? `${time}:00` : time;
+  const timestamp = `${date}T${normalizedTime}${timezone ?? ""}`;
+  return timezone ? new Date(timestamp).toISOString() : timestamp;
 }
 
 export function parsePackageManifest(text: string | undefined): PackageManifest {
@@ -155,8 +163,12 @@ export function parseChangelog(markdown: string | undefined): {
     if (releaseMatch) {
       current = {
         version: releaseMatch[1],
-        releasedAt: normalizeReleaseDate(releaseMatch[2]),
-        title: releaseMatch[3]?.trim() || null,
+        releasedAt: normalizeReleaseDate(
+          releaseMatch[2],
+          releaseMatch[3],
+          releaseMatch[4],
+        ),
+        title: releaseMatch[5]?.trim() || null,
         entries: [],
       };
       releases.push(current);
@@ -234,6 +246,23 @@ function versionState(
     consistency: candidates.length < 2 ? "unknown" : distinct.size === 1 ? "consistent" : "drift",
     candidates,
   };
+}
+
+function applyGithubReleaseTimestamps(
+  changelog: NormalizedGithubRelease[],
+  releases: GithubRepositorySnapshot["releases"],
+) {
+  const publishedByVersion = new Map<string, string>();
+  for (const release of releases) {
+    const version = cleanVersion(release.tag_name);
+    if (version && !release.draft && release.published_at) {
+      publishedByVersion.set(version, release.published_at);
+    }
+  }
+  return changelog.map((release) => {
+    const publishedAt = publishedByVersion.get(release.version);
+    return publishedAt ? { ...release, releasedAt: publishedAt } : release;
+  });
 }
 
 function stackForSnapshot(
@@ -324,6 +353,10 @@ export function normalizeGithubRepository(
       ? "CHANGELOG_MONOFOCUS.md"
       : null;
   const parsedChangelog = parseChangelog(changelogPath ? snapshot.files[changelogPath] : undefined);
+  const changelogReleases = applyGithubReleaseTimestamps(
+    parsedChangelog.releases,
+    snapshot.releases,
+  );
   const data = inferDataProfile(snapshot.files, snapshot.treePaths, manifest.dependencies);
   const description = snapshot.repository.description?.trim();
   const readmePurpose = readmeSummary(snapshot.files["README.md"]);
@@ -377,13 +410,13 @@ export function normalizeGithubRepository(
       headSha: snapshot.head?.sha ?? null,
     },
     purpose,
-    version: versionState(manifest.version, parsedChangelog.releases, snapshot.releases, snapshot.tags),
+    version: versionState(manifest.version, changelogReleases, snapshot.releases, snapshot.tags),
     changelog: {
       found: Boolean(changelogPath),
       sourcePath: changelogPath,
       sourceUrl: changelogUrl,
       hasUnreleased: parsedChangelog.hasUnreleased,
-      releases: parsedChangelog.releases,
+      releases: changelogReleases,
     },
     stack: stackForSnapshot(snapshot, manifest),
     ...data,

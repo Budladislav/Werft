@@ -3,6 +3,10 @@ import { APP_RELEASE_HISTORY } from "@/lib/release-history.generated";
 
 export const WERFT_JOURNAL_PROJECT_ID = "system:werft";
 
+function releaseTimestamp(value: string) {
+  return value.length === 10 ? `${value}T00:00:00.000Z` : value;
+}
+
 function releaseCategory(value: string): ReleaseCategory {
   const normalized = value.toLowerCase();
   if (/добав|added|new/.test(normalized)) return "added";
@@ -65,7 +69,7 @@ export const werftJournalReleases: ProjectRelease[] = APP_RELEASE_HISTORY.map(re
   id: `release:${WERFT_JOURNAL_PROJECT_ID}:${release.version}`,
   projectId: WERFT_JOURNAL_PROJECT_ID,
   version: release.version,
-  releasedAt: `${release.releasedAt}T00:00:00.000Z`,
+  releasedAt: releaseTimestamp(release.releasedAt),
   title: release.title ?? `Релиз Верфи ${release.version}`,
   source: "changelog",
   sourceUrl: "https://github.com/Budladislav/Werft/blob/main/CHANGELOG.md",
@@ -75,8 +79,8 @@ export const werftJournalReleases: ProjectRelease[] = APP_RELEASE_HISTORY.map(re
       category: releaseCategory(section.title),
       text,
     }))),
-  createdAt: `${release.releasedAt}T00:00:00.000Z`,
-  updatedAt: `${release.releasedAt}T00:00:00.000Z`,
+  createdAt: releaseTimestamp(release.releasedAt),
+  updatedAt: releaseTimestamp(release.releasedAt),
   revision: 1,
   deviceId: "werft-build",
 }));

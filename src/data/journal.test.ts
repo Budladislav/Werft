@@ -57,6 +57,16 @@ describe("cross-project journal export", () => {
     ]);
   });
 
+  it("orders different projects by exact release time", () => {
+    const source = seedReleases[0];
+    const rows = filterJournalReleases([
+      { ...source, id: "morning", projectId: "project-z", releasedAt: "2026-09-11T08:00:00.000Z" },
+      { ...source, id: "evening", projectId: "project-a", releasedAt: "2026-09-11T18:00:00.000Z" },
+    ]);
+
+    expect(rows.map((release) => release.id)).toEqual(["evening", "morning"]);
+  });
+
   it("produces human-readable Markdown and machine-readable JSON", () => {
     const rows = filterJournalReleases(seedReleases, {
       from: "2026-08-27",
@@ -88,10 +98,10 @@ describe("cross-project journal export", () => {
     const rows = filterJournalReleases(werftJournalReleases, {
       projectIds: [WERFT_JOURNAL_PROJECT_ID],
     });
-    expect(rows[0]).toMatchObject({ projectId: WERFT_JOURNAL_PROJECT_ID, version: "0.1.5" });
+    expect(rows[0]).toMatchObject({ projectId: WERFT_JOURNAL_PROJECT_ID, version: "0.1.6" });
 
     const markdown = createJournalMarkdown(rows, [werftJournalProject]);
-    expect(markdown).toContain("Верфь 0.1.5");
-    expect(markdown).toContain("Правильный порядок релизов одного дня");
+    expect(markdown).toContain("Верфь 0.1.6");
+    expect(markdown).toContain("Точная хронология релизов");
   });
 });

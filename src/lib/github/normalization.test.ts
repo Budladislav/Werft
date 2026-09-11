@@ -14,7 +14,7 @@ describe("GitHub repository normalization", () => {
 
 ## [Unreleased]
 
-## [2.4.1] — 09.08.2026 — Надёжные резервные копии
+## [2.4.1] — 09.08.2026 19:15 +02:00 — Надёжные резервные копии
 
 ### Добавлено
 - Полный JSON-экспорт.
@@ -30,7 +30,7 @@ describe("GitHub repository normalization", () => {
     expect(parsed.releases).toEqual([
       {
         version: "2.4.1",
-        releasedAt: "2026-08-09",
+        releasedAt: "2026-08-09T17:15:00.000Z",
         title: "Надёжные резервные копии",
         entries: [
           { category: "added", text: "Полный JSON-экспорт." },
@@ -118,7 +118,13 @@ describe("GitHub repository normalization", () => {
       },
       treePaths: ["sw.js", "js/services/firebase.service.js"],
       languages: { JavaScript: 100, CSS: 20 },
-      releases: [],
+      releases: [{
+        tag_name: "v3.0.6",
+        draft: false,
+        prerelease: false,
+        published_at: "2026-04-06T18:42:00Z",
+        html_url: "https://github.com/example/releases/tag/v3.0.6",
+      }],
       tags: [],
       workflows: [{
         id: 1,
@@ -132,6 +138,7 @@ describe("GitHub repository normalization", () => {
 
     const normalized = normalizeGithubRepository(snapshot, "2026-08-28T00:00:00.000Z");
     expect(normalized.version).toMatchObject({ value: "3.0.7", source: "package.json", consistency: "drift" });
+    expect(normalized.changelog.releases[0].releasedAt).toBe("2026-04-06T18:42:00Z");
     expect(normalized.delivery.mode).toBe("classic-pages");
     expect(normalized.dataProfile.mode).toBe("hybrid");
     expect(normalized.stack.map((item) => item.name)).toContain("PWA");

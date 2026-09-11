@@ -6,6 +6,17 @@
 
 ## [Unreleased]
 
+## [0.1.6] — 11.09.2026 19:21 +02:00 — Точная хронология релизов
+
+### Добавлено
+
+- Заголовок changelog принимает необязательное время и UTC offset после даты, сохраняя совместимость с прежним форматом `DD.MM.YYYY`.
+- При совпадении версии Верфь автоматически использует точный `published_at` GitHub Release.
+
+### Исправлено
+
+- Релизы разных проектов за один день сортируются по доступному точному времени, а не группируются по техническому идентификатору проекта.
+
 ## [0.1.5] — 11.09.2026 — Правильный порядок релизов одного дня
 
 ### Исправлено
@@ -78,7 +89,8 @@
 - Публичные seed-данные приватного Flow очищены от внутренних идентификаторов, путей и деталей уязвимого restore-процесса.
 - Локальные Vercel-метаданные, ключи и `.werft-backup` исключены из Git.
 
-[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/Budladislav/Werft/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/Budladislav/Werft/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/Budladislav/Werft/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/Budladislav/Werft/compare/v0.1.2...v0.1.3
