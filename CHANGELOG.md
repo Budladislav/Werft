@@ -6,6 +6,12 @@
 
 ## [Unreleased]
 
+## [0.1.8] — 12.09.2026 22:25 +02:00 — Шестой проект в реестре
+
+### Исправлено
+
+- Счётчик в реестре и описание текущего этапа теперь показывают все шесть проектов, включая «Нить».
+
 ## [0.1.7] — 12.09.2026 20:12 +02:00 — Нить на стапеле
 
 ### Добавлено
@@ -101,7 +107,8 @@
 - Публичные seed-данные приватного Flow очищены от внутренних идентификаторов, путей и деталей уязвимого restore-процесса.
 - Локальные Vercel-метаданные, ключи и `.werft-backup` исключены из Git.
 
-[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.7...HEAD
+[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.8...HEAD
+[0.1.8]: https://github.com/Budladislav/Werft/compare/v0.1.7...v0.1.8
 [0.1.7]: https://github.com/Budladislav/Werft/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/Budladislav/Werft/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/Budladislav/Werft/compare/v0.1.4...v0.1.5

@@ -4,7 +4,7 @@
 
 ## M0 — MVP одного устройства
 
-- Библиотека пяти проектов, overview, project passport, journal, maintenance, ideas, settings.
+- Библиотека шести проектов, overview, project passport, journal, maintenance, ideas, settings.
 - Mobile Dock, device-local start preference и PWA shortcuts.
 - IndexedDB, private notes, versioned full export/import и outbox-ready entity metadata.
 - Werft Standard v1 и начальная quality matrix.

@@ -8,6 +8,19 @@ export type AppReleaseHistoryEntry = {
 
 export const APP_RELEASE_HISTORY: AppReleaseHistoryEntry[] = [
   {
+    "version": "0.1.8",
+    "releasedAt": "2026-09-12T20:25:00.000Z",
+    "title": "Шестой проект в реестре",
+    "sections": [
+      {
+        "title": "Исправлено",
+        "items": [
+          "Счётчик в реестре и описание текущего этапа теперь показывают все шесть проектов, включая «Нить»."
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.1.7",
     "releasedAt": "2026-09-12T18:12:00.000Z",
     "title": "Нить на стапеле",

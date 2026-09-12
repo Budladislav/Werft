@@ -28,7 +28,7 @@ export default function ProjectsPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Реестр · { 05 }"
+        eyebrow="Реестр · { 06 }"
         title="Библиотека проектов"
         description="Паспорт каждого продукта: назначение, технологии, журнал, качество, заметки и обслуживание."
       />
