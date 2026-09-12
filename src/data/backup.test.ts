@@ -58,11 +58,11 @@ describe("Werft backup", () => {
     expect(envelope).toMatchObject({
       format: "werft-backup",
       schemaVersion: 1,
-      appVersion: "0.1.6",
+      appVersion: "0.1.7",
       exportedAt: "2026-08-28T12:00:00.000Z",
     });
     expect(envelope.checksum).toMatch(/^[a-f0-9]{64}$/u);
-    expect(envelope.payload.projects).toHaveLength(5);
+    expect(envelope.payload.projects).toHaveLength(6);
     expect(
       envelope.payload.backupPolicies.find(
         (policy) => policy.projectId === projectIds.flow,
@@ -117,7 +117,7 @@ describe("Werft backup", () => {
     expect(await database.projects.count()).toBe(0);
 
     await restoreWerftBackup(text, database);
-    expect(await database.projects.count()).toBe(5);
+    expect(await database.projects.count()).toBe(6);
     expect(await database.notes.get(note.id)).toMatchObject({
       title: "Restore drill",
       projectId: projectIds.chronoAtlas,

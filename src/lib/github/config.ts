@@ -6,6 +6,7 @@ export const GITHUB_REPOSITORY_CATALOG = [
   { name: "safe-play", changelogPaths: ["CHANGELOG.md"] },
   { name: "fitness-tracker", changelogPaths: ["CHANGELOG.md"] },
   { name: "ChronoAtlas", changelogPaths: ["CHANGELOG.md"] },
+  { name: "Diary", changelogPaths: ["CHANGELOG.md"] },
 ] as const;
 export const DEFAULT_GITHUB_REPOSITORIES = GITHUB_REPOSITORY_CATALOG.map(({ name }) => name);
 

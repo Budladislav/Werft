@@ -18,6 +18,7 @@ import {
 import { contentTables, type WerftDatabase, werftDb } from "@/data/db";
 
 export const SEED_OBSERVED_AT = "2026-08-28T04:00:00.000Z";
+const DIARY_SEED_AT = "2026-09-12T18:00:00.000Z";
 const SEED_DEVICE_ID = "werft-seed-v1";
 
 export const projectIds = {
@@ -26,6 +27,7 @@ export const projectIds = {
   fitness: "project:fitness-tracker",
   safePlay: "project:safe-play",
   chronoAtlas: "project:chronoatlas",
+  diary: "project:nit",
 } as const;
 
 function meta(id: string, timestamp = SEED_OBSERVED_AT) {
@@ -43,14 +45,16 @@ function fact(
   label: string,
   value: string,
   sourceUrl: string,
-  options?: Partial<Pick<ObservedFact, "source" | "inferred" | "pinned">>,
+  options?: Partial<Pick<ObservedFact, "source" | "inferred" | "pinned">> & {
+    observedAt?: string;
+  },
 ): ObservedFact {
   return {
     key,
     label,
     value,
     source: options?.source ?? "github",
-    observedAt: SEED_OBSERVED_AT,
+    observedAt: options?.observedAt ?? SEED_OBSERVED_AT,
     sourceUrl,
     inferred: options?.inferred,
     pinned: options?.pinned,
@@ -575,6 +579,100 @@ export const seedProjects: Project[] = [
       sortOrder: 5,
     },
   },
+  {
+    ...meta(projectIds.diary, DIARY_SEED_AT),
+    slug: "nit",
+    name: "Нить",
+    repositoryName: "Budladislav/Diary",
+    repositoryId: "seed:private-diary",
+    repositoryVisibility: "private",
+    summary:
+      "Приватный PWA-дневник с одной записью на день, быстрым локальным редактированием и подготовкой к защищённой серверной синхронизации.",
+    startedAt: "2026-09-09T16:51:49.000Z",
+    startedAtInferred: false,
+    version: "0.1.0-dev.3",
+    latestReleaseAt: "2026-09-12T18:00:00.000Z",
+    lastActivityAt: "2026-09-12T18:00:00.000Z",
+    lifecycle: "active",
+    availability: "working",
+    attention: "due-soon",
+    syncStatus: "manual",
+    lastSyncedAt: DIARY_SEED_AT,
+    pinned: false,
+    sortOrder: 6,
+    accent: "#586b98",
+    mark: "Н",
+    stack: [
+      "TypeScript",
+      "Next.js 16",
+      "React 19",
+      "Dexie",
+      "IndexedDB",
+      "Vitest",
+      "PWA",
+    ],
+    capabilities: [
+      "Лента дневника по дням",
+      "Сплошной текст месяца",
+      "Локальное редактирование и история",
+      "Поиск и выгрузка диапазонов",
+      "Предпросмотр импорта Google Keep",
+      "Offline PWA",
+    ],
+    links: [
+      { label: "GitHub", href: github("Diary"), kind: "repository" },
+      {
+        label: "Changelog",
+        href: `${github("Diary")}/blob/main/CHANGELOG.md`,
+        kind: "docs",
+      },
+    ],
+    facts: [
+      fact("defaultBranch", "Основная ветка", "main", github("Diary"), {
+        pinned: true,
+        observedAt: DIARY_SEED_AT,
+      }),
+      fact(
+        "versionSource",
+        "Источник версии",
+        "package.json",
+        `${github("Diary")}/blob/main/package.json`,
+        { source: "repository", pinned: true, observedAt: DIARY_SEED_AT },
+      ),
+      fact(
+        "changelogPath",
+        "Changelog",
+        "CHANGELOG.md",
+        `${github("Diary")}/blob/main/CHANGELOG.md`,
+        { source: "repository", observedAt: DIARY_SEED_AT },
+      ),
+      fact(
+        "primaryStore",
+        "Хранилище прототипа",
+        "IndexedDB · nit-diary-demo-v1",
+        `${github("Diary")}/blob/main/README.md`,
+        { source: "repository", observedAt: DIARY_SEED_AT },
+      ),
+    ],
+    dataProfile: {
+      mode: "local-only",
+      stores: ["IndexedDB · nit-diary-demo-v1"],
+      sensitivity: "sensitive",
+    },
+    publicProfile: {
+      enabled: false,
+      slug: "nit",
+      tagline: "Дни складываются в одну нить",
+      shortDescription: "Личный дневник по дням с быстрым локальным вводом.",
+      categories: ["journal", "life", "productivity"],
+      platforms: ["PWA", "Android", "Desktop"],
+      highlights: ["Local-first", "IndexedDB", "Приватность"],
+      repositoryUrl: github("Diary"),
+      showVersion: true,
+      featured: false,
+      sortOrder: 6,
+    },
+  },
 ];
 
 function release(
@@ -598,6 +696,35 @@ function release(
 }
 
 export const seedReleases: ProjectRelease[] = [
+  release(
+    projectIds.diary,
+    "0.1.0-dev.3",
+    "2026-09-12T18:00:00.000Z",
+    "Чистый мобильный дневник",
+    `${github("Diary")}/blob/main/CHANGELOG.md`,
+    [
+      {
+        id: "nit-dev3-startup",
+        category: "fixed",
+        text: "Блокирующая заставка убрана, каркас дневника показывается сразу.",
+      },
+      {
+        id: "nit-dev3-navigation",
+        category: "changed",
+        text: "Главный экран очищен, частые действия перенесены под правый палец.",
+      },
+      {
+        id: "nit-dev3-editor",
+        category: "fixed",
+        text: "Редактор удерживает конец текста в видимой области после открытия клавиатуры.",
+      },
+      {
+        id: "nit-dev3-keep",
+        category: "added",
+        text: "Добавлен безопасный предпросмотр старых заметок Google Keep.",
+      },
+    ],
+  ),
   release(
     projectIds.flow,
     "11.33.0",
@@ -850,6 +977,17 @@ export const seedBackupPolicies: BackupPolicy[] = [
     reason:
       "Транзакционный JSON export готов, но файл пока создаётся вручную и хранится без шифрования.",
     format: "chronoatlas-json",
+  },
+  {
+    ...meta("backup-policy:nit", DIARY_SEED_AT),
+    projectId: projectIds.diary,
+    mode: "manual-file",
+    sensitivity: "sensitive",
+    cadenceDays: 7,
+    nextDueAt: "2026-09-12T18:00:00.000Z",
+    status: "not-configured",
+    reason:
+      "Прототип хранит только тестовые записи. Полный backup и проверенное восстановление ещё не реализованы.",
   },
 ];
 
@@ -1173,6 +1311,49 @@ const assessments: Record<string, Record<string, AssessmentSpec>> = {
       evidence: "Нет аккаунта/сервера; README предупреждает о plaintext sensitive backup.",
     },
   },
+  [projectIds.diary]: {
+    "release.single-version-source": {
+      result: "verified",
+      evidence: "package.json — каноническая версия; repository check сверяет lockfile, README и service worker.",
+    },
+    "release.canonical-changelog": {
+      result: "verified",
+      evidence: "Root CHANGELOG.md содержит датированный prerelease и раздел Unreleased.",
+    },
+    "quality.check-command": {
+      result: "verified",
+      evidence: "npm run check включает repository policy, lint, typecheck, Vitest и production build.",
+    },
+    "quality.ci-before-deploy": {
+      result: "warning",
+      evidence: "GitHub Actions запускает check; production deployment дневника ещё не создан.",
+      source: "github",
+      remediation: "Перед первой публикацией связать Vercel deployment с успешным quality gate.",
+    },
+    "pwa.installable-shell": {
+      result: "warning",
+      evidence: "Manifest, иконки и offline shell реализованы; установленная PWA ещё проходит проверку на физическом Android.",
+      remediation: "Завершить install/offline/update проверку на целевом телефоне.",
+    },
+    "data.classification": {
+      result: "verified",
+      evidence: "README и SECURITY классифицируют записи как sensitive; прототип отделён в nit-diary-demo-v1.",
+    },
+    "backup.versioned-export": {
+      result: "action-required",
+      evidence: "Есть диапазонная выгрузка и Keep preview, но полного backup всей базы и ревизий пока нет.",
+      remediation: "Реализовать versioned envelope с checksum до импорта личного архива.",
+    },
+    "backup.atomic-restore": {
+      result: "action-required",
+      evidence: "Полный restore и независимый restore drill ещё не реализованы.",
+      remediation: "Добавить атомарное восстановление и проверить его на чистой базе.",
+    },
+    "security.private-data-boundary": {
+      result: "verified",
+      evidence: "Private repo и Верфь получают только технические сведения; тексты дневника и backup payload исключены.",
+    },
+  },
 };
 
 export const seedQualityAssessments: QualityAssessment[] = seedProjects.flatMap(
@@ -1197,14 +1378,24 @@ export const seedQualityAssessments: QualityAssessment[] = seedProjects.flatMap(
 );
 
 export const seedSyncEvents: SyncEvent[] = seedProjects.map((project) => ({
-  ...meta(`sync:${project.id}:github-audit`),
+  ...meta(
+    `sync:${project.id}:github-audit`,
+    project.id === projectIds.diary ? DIARY_SEED_AT : SEED_OBSERVED_AT,
+  ),
   projectId: project.id,
   provider: "github",
   direction: "pull",
-  status: "success",
-  summary: `GitHub-аудит ${project.repositoryName}`,
-  occurredAt: SEED_OBSERVED_AT,
-  details: "Read-only metadata and repository files snapshot.",
+  status: project.id === projectIds.diary ? "queued" : "success",
+  summary:
+    project.id === projectIds.diary
+      ? "Нить зарегистрирована; ожидается доступ GitHub App"
+      : `GitHub-аудит ${project.repositoryName}`,
+  occurredAt:
+    project.id === projectIds.diary ? DIARY_SEED_AT : SEED_OBSERVED_AT,
+  details:
+    project.id === projectIds.diary
+      ? "Карточка не содержит дневниковых записей. После добавления Diary в Only select repositories нужна ручная сверка."
+      : "Read-only metadata and repository files snapshot.",
 }));
 
 export const seedSettings: AppSetting[] = [

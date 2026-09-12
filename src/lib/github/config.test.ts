@@ -9,13 +9,14 @@ import {
 } from "./config";
 
 describe("GitHub allowlist configuration", () => {
-  it("includes exactly the five approved repositories by default", () => {
+  it("includes all approved repositories by default", () => {
     expect(DEFAULT_GITHUB_REPOSITORIES).toEqual([
       "Flow",
       "Planer",
       "safe-play",
       "fitness-tracker",
       "ChronoAtlas",
+      "Diary",
     ]);
   });
 

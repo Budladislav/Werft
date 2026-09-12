@@ -9,6 +9,7 @@
 - `Budladislav/safe-play`
 - `Budladislav/fitness-tracker`
 - `Budladislav/ChronoAtlas`
+- `Budladislav/Diary`
 
 Переменная `GITHUB_REPOSITORIES` может временно выбрать подмножество, но не расширить список. Разрешённые файлы: `package.json`, `README.md`, manifests, root `CHANGELOG.md` и `CHANGELOG_MONOFOCUS.md` только для legacy MonoFocus. Универсального file/repository proxy нет.
 
@@ -20,7 +21,7 @@
 4. Webhooks оставить отключёнными до появления server-side хранилища наблюдений.
 5. Repository permissions: `Metadata: Read-only`, `Contents: Read-only`, `Actions: Read-only`; остальные — No access.
 6. Account permissions не запрашивать.
-7. Установить App только на пять перечисленных репозиториев.
+7. Установить App только на перечисленные репозитории.
 8. Скопировать Client ID и создать Client Secret в server environment.
 
 Authorization request намеренно не содержит OAuth `scope`: права user token ограничивает установка и read-only permissions GitHub App. Не заменять это classic OAuth App с широким `repo` scope.

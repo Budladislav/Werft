@@ -6,6 +6,18 @@
 
 ## [Unreleased]
 
+## [0.1.7] — 12.09.2026 20:12 +02:00 — Нить на стапеле
+
+### Добавлено
+
+- Приватный PWA-дневник «Нить» зарегистрирован шестым проектом с техническим паспортом, prerelease-историей и начальными оценками Werft Standard.
+- GitHub allowlist расширен репозиторием `Budladislav/Diary` с доступом только к корневому changelog и разрешённым техническим файлам.
+
+### Безопасность
+
+- «Нить» помечена как чувствительный local-only прототип без публичной витрины; тексты дневника и файлы импорта не передаются в Верфь.
+- Backup отмечен неподтверждённым, а GitHub-сверка — ожидающей отдельного доступа App, поэтому Верфь не показывает преждевременный зелёный статус.
+
 ## [0.1.6] — 11.09.2026 19:21 +02:00 — Точная хронология релизов
 
 ### Добавлено
@@ -89,7 +101,8 @@
 - Публичные seed-данные приватного Flow очищены от внутренних идентификаторов, путей и деталей уязвимого restore-процесса.
 - Локальные Vercel-метаданные, ключи и `.werft-backup` исключены из Git.
 
-[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/Budladislav/Werft/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/Budladislav/Werft/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/Budladislav/Werft/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/Budladislav/Werft/compare/v0.1.4...v0.1.5
 [0.1.4]: https://github.com/Budladislav/Werft/compare/v0.1.3...v0.1.4

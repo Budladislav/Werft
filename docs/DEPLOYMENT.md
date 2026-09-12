@@ -50,6 +50,7 @@ Private key не нужен. Верфь использует Client ID, Client S
 - `safe-play`
 - `fitness-tracker`
 - `ChronoAtlas`
+- `Diary`
 
 ## 4. Vercel environment variables
 
@@ -61,7 +62,7 @@ GITHUB_APP_CLIENT_ID=<GitHub App Client ID>
 GITHUB_APP_CLIENT_SECRET=<GitHub App Client Secret>
 WERFT_SESSION_SECRET=<base64url-encoded 32-byte random key>
 GITHUB_OWNER_LOGIN=Budladislav
-GITHUB_REPOSITORIES=Flow,Planer,safe-play,fitness-tracker,ChronoAtlas
+GITHUB_REPOSITORIES=Flow,Planer,safe-play,fitness-tracker,ChronoAtlas,Diary
 ```
 
 `GITHUB_APP_CLIENT_SECRET` и `WERFT_SESSION_SECRET` должны быть отмечены в Vercel как Sensitive. Значения нельзя сохранять в Git, заметки, changelog или deployment logs. После изменения переменных обязателен новый Production deploy.
@@ -72,7 +73,7 @@ GITHUB_REPOSITORIES=Flow,Planer,safe-play,fitness-tracker,ChronoAtlas
 2. `/manifest.webmanifest`, `/sw.js` и все основные экраны отвечают `200`.
 3. `/api/github/status` без сессии отвечает `configured: true`, `connected: false` и `Cache-Control: private, no-store`.
 4. В `/settings` выполнить GitHub OAuth; после возврата должно появиться состояние «подключено».
-5. Запустить «Сверить сейчас» и проверить все пять проектов, включая private Flow.
+5. Запустить «Сверить сейчас» и проверить все шесть проектов, включая private Flow и sensitive-прототип «Нить».
 6. Проверить мобильный `/dock`, установку PWA, экспорт `.werft-backup` и отсутствие ошибок в browser/runtime logs.
 7. Сравнить `HEAD` и `origin/main`; сохранить production URL и deployment id в отчёте релиза.
 

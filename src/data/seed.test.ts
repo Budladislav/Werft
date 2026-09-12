@@ -21,18 +21,19 @@ describe("Werft initial data", () => {
     await database.delete();
   });
 
-  it("seeds exactly the five approved repositories and remains idempotent", async () => {
+  it("seeds all approved repositories and remains idempotent", async () => {
     await ensureSeeded(database);
     await ensureSeeded(database);
 
     const projects = await database.projects.orderBy("sortOrder").toArray();
-    expect(projects).toHaveLength(5);
+    expect(projects).toHaveLength(6);
     expect(projects.map((project) => project.repositoryName)).toEqual([
       "Budladislav/Flow",
       "Budladislav/Planer",
       "Budladislav/fitness-tracker",
       "Budladislav/safe-play",
       "Budladislav/ChronoAtlas",
+      "Budladislav/Diary",
     ]);
     expect(projects.some((project) => /ren2gar/iu.test(project.repositoryName))).toBe(
       false,

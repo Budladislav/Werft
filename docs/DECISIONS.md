@@ -12,7 +12,7 @@ MVP хранит пользовательские данные в IndexedDB че
 
 ## D-003. Read-only GitHub App вместо клиентского токена
 
-GitHub-интеграция использует GitHub App user access token. App устанавливается только на пять выбранных репозиториев и получает только `Metadata: read`, `Contents: read`, `Actions: read`. Код не передаёт client secret или access token браузерному JavaScript: токен хранится внутри AES-256-GCM-зашифрованной HttpOnly-cookie максимум восемь часов.
+GitHub-интеграция использует GitHub App user access token. App устанавливается только на выбранные репозитории из кодового allowlist и получает только `Metadata: read`, `Contents: read`, `Actions: read`. Код не передаёт client secret или access token браузерному JavaScript: токен хранится внутри AES-256-GCM-зашифрованной HttpOnly-cookie максимум восемь часов.
 
 Доступ закреплён за immutable GitHub user id `46434977`, а не только за изменяемым login. Серверный код содержит фиксированный allowlist репозиториев и файлов; универсального GitHub proxy нет. Ответы `/api/github/*` помечены `private, no-store`, а service worker исключает `/api` и `/auth`.
 
