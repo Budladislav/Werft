@@ -26,7 +26,7 @@ describe("Werft initial data", () => {
     await ensureSeeded(database);
 
     const projects = await database.projects.orderBy("sortOrder").toArray();
-    expect(projects).toHaveLength(6);
+    expect(projects).toHaveLength(7);
     expect(projects.map((project) => project.repositoryName)).toEqual([
       "Budladislav/Flow",
       "Budladislav/Planer",
@@ -34,7 +34,15 @@ describe("Werft initial data", () => {
       "Budladislav/safe-play",
       "Budladislav/ChronoAtlas",
       "Budladislav/Diary",
+      "Budladislav/Utilities",
     ]);
+    expect(projects.at(-1)).toMatchObject({
+      name: "Коммунальные",
+      repositoryVisibility: "public",
+      version: "0.1.0",
+      dataProfile: { mode: "local-only", sensitivity: "private" },
+      publicProfile: { enabled: true },
+    });
     expect(projects.some((project) => /ren2gar/iu.test(project.repositoryName))).toBe(
       false,
     );
@@ -62,6 +70,7 @@ describe("Werft initial data", () => {
       projectIds.fitness,
       projectIds.safePlay,
       projectIds.chronoAtlas,
+      projectIds.utilities,
     ]);
   });
 

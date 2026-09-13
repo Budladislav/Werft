@@ -98,10 +98,10 @@ describe("cross-project journal export", () => {
     const rows = filterJournalReleases(werftJournalReleases, {
       projectIds: [WERFT_JOURNAL_PROJECT_ID],
     });
-    expect(rows[0]).toMatchObject({ projectId: WERFT_JOURNAL_PROJECT_ID, version: "0.1.8" });
+    expect(rows[0]).toMatchObject({ projectId: WERFT_JOURNAL_PROJECT_ID, version: "0.1.9" });
 
     const markdown = createJournalMarkdown(rows, [werftJournalProject]);
-    expect(markdown).toContain("Верфь 0.1.8");
-    expect(markdown).toContain("Точная хронология релизов");
+    expect(markdown).toContain("Верфь 0.1.9");
+    expect(markdown).toContain("Коммунальные на стапеле");
   });
 });

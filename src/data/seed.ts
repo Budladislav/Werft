@@ -19,6 +19,7 @@ import { contentTables, type WerftDatabase, werftDb } from "@/data/db";
 
 export const SEED_OBSERVED_AT = "2026-08-28T04:00:00.000Z";
 const DIARY_SEED_AT = "2026-09-12T18:00:00.000Z";
+const UTILITIES_SEED_AT = "2026-09-13T10:26:07.000Z";
 const SEED_DEVICE_ID = "werft-seed-v1";
 
 export const projectIds = {
@@ -28,6 +29,7 @@ export const projectIds = {
   safePlay: "project:safe-play",
   chronoAtlas: "project:chronoatlas",
   diary: "project:nit",
+  utilities: "project:utilities",
 } as const;
 
 function meta(id: string, timestamp = SEED_OBSERVED_AT) {
@@ -673,6 +675,105 @@ export const seedProjects: Project[] = [
       sortOrder: 6,
     },
   },
+  {
+    ...meta(projectIds.utilities, UTILITIES_SEED_AT),
+    slug: "utilities",
+    name: "Коммунальные",
+    repositoryName: "Budladislav/Utilities",
+    repositoryId: "seed:public-utilities",
+    repositoryVisibility: "public",
+    summary:
+      "Лёгкое local-first приложение для домашних счётчиков, показаний, расхода и переносимых резервных копий без сервера и PWA.",
+    startedAt: UTILITIES_SEED_AT,
+    startedAtInferred: false,
+    version: "0.1.0",
+    latestReleaseAt: UTILITIES_SEED_AT,
+    lastActivityAt: UTILITIES_SEED_AT,
+    lifecycle: "active",
+    availability: "working",
+    attention: "due-soon",
+    syncStatus: "manual",
+    lastSyncedAt: UTILITIES_SEED_AT,
+    pinned: false,
+    sortOrder: 7,
+    accent: "#176b5c",
+    mark: "КУ",
+    stack: [
+      "TypeScript",
+      "React 19",
+      "Vite 8",
+      "Dexie 4",
+      "Decimal.js",
+      "GitHub Pages",
+    ],
+    capabilities: [
+      "Счётчики и история показаний",
+      "Расход и помесячная оценка",
+      "Локальная IndexedDB",
+      "Версионированный JSON backup",
+      "Импорт Flow (экспериментально)",
+      "Mobile и Desktop",
+    ],
+    links: [
+      {
+        label: "Коммунальные",
+        href: "https://budladislav.github.io/Utilities/",
+        kind: "app",
+      },
+      { label: "GitHub", href: github("Utilities"), kind: "repository" },
+      {
+        label: "Changelog",
+        href: `${github("Utilities")}/blob/main/CHANGELOG.md`,
+        kind: "docs",
+      },
+    ],
+    facts: [
+      fact("defaultBranch", "Основная ветка", "main", github("Utilities"), {
+        pinned: true,
+        observedAt: UTILITIES_SEED_AT,
+      }),
+      fact(
+        "versionSource",
+        "Источник версии",
+        "package.json",
+        `${github("Utilities")}/blob/main/package.json`,
+        { source: "repository", pinned: true, observedAt: UTILITIES_SEED_AT },
+      ),
+      fact(
+        "changelogPath",
+        "Changelog",
+        "CHANGELOG.md",
+        `${github("Utilities")}/blob/main/CHANGELOG.md`,
+        { source: "repository", observedAt: UTILITIES_SEED_AT },
+      ),
+      fact(
+        "primaryStore",
+        "Основное хранилище",
+        "IndexedDB · utilities-local-v1",
+        `${github("Utilities")}/blob/main/README.md`,
+        { source: "repository", observedAt: UTILITIES_SEED_AT },
+      ),
+    ],
+    dataProfile: {
+      mode: "local-only",
+      stores: ["IndexedDB · utilities-local-v1", "JSON backup · utilities-backup v1"],
+      sensitivity: "private",
+    },
+    publicProfile: {
+      enabled: true,
+      slug: "utilities",
+      tagline: "Показания без облака",
+      shortDescription: "Домашние счётчики, расход и резервные копии в одном локальном приложении.",
+      categories: ["home", "utilities", "productivity"],
+      platforms: ["Web", "Desktop", "Mobile"],
+      highlights: ["Local-first", "IndexedDB", "Без сервера"],
+      appUrl: "https://budladislav.github.io/Utilities/",
+      repositoryUrl: github("Utilities"),
+      showVersion: true,
+      featured: false,
+      sortOrder: 7,
+    },
+  },
 ];
 
 function release(
@@ -696,6 +797,35 @@ function release(
 }
 
 export const seedReleases: ProjectRelease[] = [
+  release(
+    projectIds.utilities,
+    "0.1.0",
+    UTILITIES_SEED_AT,
+    "Локальный учёт показаний",
+    `${github("Utilities")}/blob/main/CHANGELOG.md`,
+    [
+      {
+        id: "utilities-0.1.0-meters",
+        category: "added",
+        text: "Добавлены счётчики, история показаний, расчёты расхода и графики.",
+      },
+      {
+        id: "utilities-0.1.0-backup",
+        category: "added",
+        text: "Реализованы IndexedDB, версионированный JSON backup с checksum и атомарное восстановление.",
+      },
+      {
+        id: "utilities-0.1.0-flow-import",
+        category: "changed",
+        text: "Импорт Flow остаётся экспериментальным: реальные копии с полем unit будут поддержаны отдельным патчем.",
+      },
+      {
+        id: "utilities-0.1.0-boundary",
+        category: "security",
+        text: "Показания остаются в браузере; сервер, аккаунт, аналитика и PWA отсутствуют.",
+      },
+    ],
+  ),
   release(
     projectIds.diary,
     "0.1.0-dev.3",
@@ -988,6 +1118,19 @@ export const seedBackupPolicies: BackupPolicy[] = [
     status: "not-configured",
     reason:
       "Прототип хранит только тестовые записи. Полный backup и проверенное восстановление ещё не реализованы.",
+  },
+  {
+    ...meta("backup-policy:utilities", UTILITIES_SEED_AT),
+    projectId: projectIds.utilities,
+    priority: 5,
+    mode: "manual-file",
+    sensitivity: "private",
+    cadenceDays: 7,
+    nextDueAt: "2026-09-20T10:26:07.000Z",
+    status: "not-configured",
+    reason:
+      "Versioned JSON backup, checksum и атомарный импорт покрыты тестами; физический restore drill ещё не подтверждён.",
+    format: "utilities-backup-v1",
   },
 ];
 
@@ -1354,6 +1497,47 @@ const assessments: Record<string, Record<string, AssessmentSpec>> = {
       evidence: "Private repo и Верфь получают только технические сведения; тексты дневника и backup payload исключены.",
     },
   },
+  [projectIds.utilities]: {
+    "release.single-version-source": {
+      result: "verified",
+      evidence: "package.json — каноническая версия; repository check сверяет её с CHANGELOG.md и сборкой.",
+    },
+    "release.canonical-changelog": {
+      result: "verified",
+      evidence: "Root CHANGELOG.md содержит датированный релиз 0.1.0 и раздел Unreleased.",
+    },
+    "quality.check-command": {
+      result: "verified",
+      evidence: "npm run check включает lint, typecheck, 20 тестов, production build, version check и gzip budget.",
+    },
+    "quality.ci-before-deploy": {
+      result: "warning",
+      evidence: "GitHub Pages workflow публикует dist после quality gate; первый удалённый прогон ещё не подтверждён.",
+      source: "repository",
+      remediation: "Проверить первый Actions run и production URL без кеша после публикации.",
+    },
+    "pwa.installable-shell": {
+      result: "not-applicable",
+      evidence: "По границе продукта это обычное статическое приложение без manifest и service worker.",
+    },
+    "data.classification": {
+      result: "verified",
+      evidence: "Показания классифицированы private и хранятся только в IndexedDB текущего origin.",
+    },
+    "backup.versioned-export": {
+      result: "verified",
+      evidence: "utilities-backup v1 содержит metadata, данные и SHA-256 checksum; roundtrip покрыт тестами.",
+    },
+    "backup.atomic-restore": {
+      result: "warning",
+      evidence: "Валидация до транзакции и откат покрыты тестами; физический export/restore drill ещё не завершён.",
+      remediation: "Проверить скачанный файл на чистом браузерном профиле.",
+    },
+    "security.private-data-boundary": {
+      result: "verified",
+      evidence: "Backend и аналитика отсутствуют; GitHub и Верфь получают только технические метаданные.",
+    },
+  },
 };
 
 export const seedQualityAssessments: QualityAssessment[] = seedProjects.flatMap(
@@ -1377,26 +1561,35 @@ export const seedQualityAssessments: QualityAssessment[] = seedProjects.flatMap(
     }),
 );
 
-export const seedSyncEvents: SyncEvent[] = seedProjects.map((project) => ({
-  ...meta(
-    `sync:${project.id}:github-audit`,
-    project.id === projectIds.diary ? DIARY_SEED_AT : SEED_OBSERVED_AT,
-  ),
-  projectId: project.id,
-  provider: "github",
-  direction: "pull",
-  status: project.id === projectIds.diary ? "queued" : "success",
-  summary:
-    project.id === projectIds.diary
+export const seedSyncEvents: SyncEvent[] = seedProjects.map((project) => {
+  const isDiary = project.id === projectIds.diary;
+  const isUtilities = project.id === projectIds.utilities;
+  const isQueued = isDiary || isUtilities;
+  const occurredAt = isDiary
+    ? DIARY_SEED_AT
+    : isUtilities
+      ? UTILITIES_SEED_AT
+      : SEED_OBSERVED_AT;
+
+  return {
+    ...meta(`sync:${project.id}:github-audit`, occurredAt),
+    projectId: project.id,
+    provider: "github",
+    direction: "pull",
+    status: isQueued ? "queued" : "success",
+    summary: isDiary
       ? "Нить зарегистрирована; ожидается доступ GitHub App"
-      : `GitHub-аудит ${project.repositoryName}`,
-  occurredAt:
-    project.id === projectIds.diary ? DIARY_SEED_AT : SEED_OBSERVED_AT,
-  details:
-    project.id === projectIds.diary
+      : isUtilities
+        ? "Коммунальные зарегистрированы; ожидается доступ GitHub App"
+        : `GitHub-аудит ${project.repositoryName}`,
+    occurredAt,
+    details: isDiary
       ? "Карточка не содержит дневниковых записей. После добавления Diary в Only select repositories нужна ручная сверка."
-      : "Read-only metadata and repository files snapshot.",
-}));
+      : isUtilities
+        ? "Верфь получает только технические метаданные. Показания и backup остаются в браузере пользователя."
+        : "Read-only metadata and repository files snapshot.",
+  };
+});
 
 export const seedSettings: AppSetting[] = [
   {

@@ -17,6 +17,7 @@ describe("GitHub allowlist configuration", () => {
       "fitness-tracker",
       "ChronoAtlas",
       "Diary",
+      "Utilities",
     ]);
   });
 
