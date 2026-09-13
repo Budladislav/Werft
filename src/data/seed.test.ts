@@ -43,11 +43,27 @@ describe("Werft initial data", () => {
       dataProfile: { mode: "local-only", sensitivity: "private" },
       publicProfile: { enabled: true },
     });
+    expect(projects.find((project) => project.id === projectIds.monoFocus)).toMatchObject({ name: "Takt" });
+    expect(projects.find((project) => project.id === projectIds.diary)?.iconUrl).toBe("/project-icons/nit.svg");
+    expect(projects.find((project) => project.id === projectIds.utilities)?.iconUrl).toBe("/project-icons/utilities.svg");
     expect(projects.some((project) => /ren2gar/iu.test(project.repositoryName))).toBe(
       false,
     );
     expect(await database.releases.count()).toBeGreaterThan(5);
     expect(await database.ideas.count()).toBeGreaterThanOrEqual(4);
+  });
+
+  it("upgrades legacy presentation without replacing an existing custom icon", async () => {
+    await ensureSeeded(database);
+    await database.projects.update(projectIds.monoFocus, { name: "MonoFocus" });
+    await database.projects.update(projectIds.diary, { iconUrl: undefined });
+    await database.projects.update(projectIds.utilities, { iconUrl: "/custom.svg" });
+
+    await ensureSeeded(database);
+
+    expect(await database.projects.get(projectIds.monoFocus)).toMatchObject({ name: "Takt" });
+    expect(await database.projects.get(projectIds.diary)).toMatchObject({ iconUrl: "/project-icons/nit.svg" });
+    expect(await database.projects.get(projectIds.utilities)).toMatchObject({ iconUrl: "/custom.svg" });
   });
 
   it("keeps Flow excluded and follows the approved adapter priority", async () => {

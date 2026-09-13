@@ -14,7 +14,7 @@
 
 ## M1 — реальные backup-адаптеры
 
-1. MonoFocus: согласованный versioned JSON export и restore drill.
+1. Takt: согласованный versioned JSON export и restore drill.
 2. Fitness Tracker: инвентаризация TXT/JSON/Firebase данных, устранение version drift, затем адаптер.
 3. Safe Play: JSON + IndexedDB covers, проверка полноты и restore.
 4. ChronoAtlas: интеграция существующего versioned/transactional контракта как эталон.

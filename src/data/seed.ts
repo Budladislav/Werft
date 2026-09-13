@@ -165,7 +165,7 @@ export const seedProjects: Project[] = [
   {
     ...meta(projectIds.monoFocus),
     slug: "monofocus",
-    name: "MonoFocus",
+    name: "Takt",
     repositoryName: "Budladislav/Planer",
     repositoryId: "1126348935",
     repositoryVisibility: "public",
@@ -204,7 +204,7 @@ export const seedProjects: Project[] = [
     ],
     links: [
       {
-        label: "MonoFocus",
+        label: "Takt",
         href: "https://budladislav.github.io/Planer/",
         kind: "app",
       },
@@ -604,6 +604,7 @@ export const seedProjects: Project[] = [
     sortOrder: 6,
     accent: "#586b98",
     mark: "Н",
+    iconUrl: "/project-icons/nit.svg",
     stack: [
       "TypeScript",
       "Next.js 16",
@@ -698,6 +699,7 @@ export const seedProjects: Project[] = [
     sortOrder: 7,
     accent: "#176b5c",
     mark: "КУ",
+    iconUrl: "/project-icons/utilities.svg",
     stack: [
       "TypeScript",
       "React 19",
@@ -1188,7 +1190,7 @@ export const seedMaintenanceRules: MaintenanceRule[] = [
   {
     ...meta("maintenance:monofocus:release-contract"),
     projectId: projectIds.monoFocus,
-    title: "Унифицировать release contract MonoFocus",
+    title: "Унифицировать release contract Takt",
     description:
       "Перенести changelog к общему имени и включить production build в единую команду check.",
     kind: "quality",
@@ -1235,7 +1237,7 @@ export const seedIdeas: FutureIdea[] = [
     summary:
       "Единый контракт для GitHub facts, changelog, browser backup и remote workflow adapters.",
     stage: "planned",
-    nextAction: "Зафиксировать capability manifest и начать с MonoFocus adapter.",
+    nextAction: "Зафиксировать capability manifest и начать с Takt adapter.",
     tags: ["adapters", "automation", "backup", "github"],
     target: "ecosystem",
   },
@@ -1610,6 +1612,27 @@ async function addMissingById<T extends { id: string }>(
   if (missing.length > 0) await table.bulkAdd(missing);
 }
 
+async function reconcileProjectPresentation(database: WerftDatabase) {
+  const presentation = new Map([
+    [projectIds.monoFocus, { legacyName: "MonoFocus", name: "Takt" }],
+    [projectIds.diary, { iconUrl: "/project-icons/nit.svg" }],
+    [projectIds.utilities, { iconUrl: "/project-icons/utilities.svg" }],
+  ]);
+
+  for (const [projectId, update] of presentation) {
+    const project = await database.projects.get(projectId);
+    if (!project) continue;
+    const name = "name" in update && project.name === update.legacyName
+      ? update.name
+      : project.name;
+    const iconUrl = "iconUrl" in update && !project.iconUrl
+      ? update.iconUrl
+      : project.iconUrl;
+    if (name === project.name && iconUrl === project.iconUrl) continue;
+    await database.projects.put({ ...project, name, iconUrl });
+  }
+}
+
 export async function ensureSeeded(database: WerftDatabase = werftDb) {
   await database.transaction("rw", contentTables(database), async () => {
     await addMissingById(database.projects, seedProjects);
@@ -1623,5 +1646,6 @@ export async function ensureSeeded(database: WerftDatabase = werftDb) {
     );
     await addMissingById(database.syncEvents, seedSyncEvents);
     await addMissingById(database.settings, seedSettings);
+    await reconcileProjectPresentation(database);
   });
 }

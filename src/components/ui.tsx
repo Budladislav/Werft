@@ -153,7 +153,7 @@ export function ProjectAvatar({ project, size = "medium" }: { project: Project; 
         <>
           <span aria-hidden="true">{project.mark}</span>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={project.iconUrl} alt="" />
+          <img src={project.iconUrl} alt="" onError={event => { event.currentTarget.hidden = true; }} />
         </>
       ) : <span aria-hidden="true">{project.mark}</span>}
     </span>

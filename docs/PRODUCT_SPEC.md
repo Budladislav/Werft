@@ -11,7 +11,7 @@
 | Проект | Репозиторий | Роль в экосистеме | Backup-позиция |
 | --- | --- | --- | --- |
 | Flow | `Budladislav/Flow` (private) | Активная финансовая система | Исключён: чувствительные данные |
-| MonoFocus | `Budladislav/Planer` | Основной активный планер | Адаптер № 1 |
+| Takt | `Budladislav/Planer` | Основной активный планер | Адаптер № 1 |
 | Fitness Tracker | `Budladislav/fitness-tracker` | Старейшее приложение, приоритет модернизации | Адаптер № 2 |
 | Safe Play | `Budladislav/safe-play` | Стабильный проект | Адаптер № 3 |
 | ChronoAtlas | `Budladislav/ChronoAtlas` | Свежий технический ориентир | Адаптер № 4 |

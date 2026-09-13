@@ -80,14 +80,14 @@ describe("cross-project journal export", () => {
     const markdown = createJournalMarkdown(rows, seedProjects, options);
     expect(markdown).toContain("# Сквозной журнал Верфи");
     expect(markdown).toContain("Flow 11.33.0");
-    expect(markdown).toContain("MonoFocus 3.1.0");
+    expect(markdown).toContain("Takt 3.1.0");
 
     const json = JSON.parse(
       createJournalJson(rows, seedProjects, options),
     ) as { format: string; releases: Array<{ projectName: string }> };
     expect(json.format).toBe("werft-journal");
     expect(json.releases.map((release) => release.projectName)).toEqual(
-      expect.arrayContaining(["Flow", "MonoFocus"]),
+      expect.arrayContaining(["Flow", "Takt"]),
     );
     expect(journalExportFilename("md", options)).toBe(
       "werft-journal_2026-08-27_2026-08-27.md",
@@ -98,10 +98,10 @@ describe("cross-project journal export", () => {
     const rows = filterJournalReleases(werftJournalReleases, {
       projectIds: [WERFT_JOURNAL_PROJECT_ID],
     });
-    expect(rows[0]).toMatchObject({ projectId: WERFT_JOURNAL_PROJECT_ID, version: "0.1.9" });
+    expect(rows[0]).toMatchObject({ projectId: WERFT_JOURNAL_PROJECT_ID, version: "0.1.10" });
 
     const markdown = createJournalMarkdown(rows, [werftJournalProject]);
-    expect(markdown).toContain("Верфь 0.1.9");
+    expect(markdown).toContain("Верфь 0.1.10");
     expect(markdown).toContain("Коммунальные на стапеле");
   });
 });

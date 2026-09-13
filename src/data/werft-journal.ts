@@ -37,6 +37,7 @@ export const werftJournalProject: Project = {
   sortOrder: 0,
   accent: "#167b75",
   mark: "ВФ",
+  iconUrl: "/icons/werft.svg",
   stack: ["TypeScript", "Next.js", "React", "Dexie", "PWA"],
   capabilities: ["Управление экосистемой проектов"],
   links: [
