@@ -20,6 +20,7 @@ import { contentTables, type WerftDatabase, werftDb } from "@/data/db";
 export const SEED_OBSERVED_AT = "2026-08-28T04:00:00.000Z";
 const DIARY_SEED_AT = "2026-09-12T18:00:00.000Z";
 const UTILITIES_SEED_AT = "2026-09-13T10:26:07.000Z";
+const ASHROAD_SEED_AT = "2026-10-03T02:35:30.000Z";
 const SEED_DEVICE_ID = "werft-seed-v1";
 
 export const projectIds = {
@@ -30,6 +31,7 @@ export const projectIds = {
   chronoAtlas: "project:chronoatlas",
   diary: "project:nit",
   utilities: "project:utilities",
+  ashroad: "project:ashroad",
 } as const;
 
 function meta(id: string, timestamp = SEED_OBSERVED_AT) {
@@ -776,6 +778,93 @@ export const seedProjects: Project[] = [
       sortOrder: 7,
     },
   },
+  {
+    ...meta(projectIds.ashroad, ASHROAD_SEED_AT),
+    slug: "ashroad",
+    name: "Ashroad",
+    repositoryName: "Budladislav/Ashroad",
+    repositoryId: "seed:private-ashroad",
+    repositoryVisibility: "private",
+    summary:
+      "Portrait-first solo-RPG о Пепельном тракте: развитие героя, охота, экипировка, ремесло и Отголоски.",
+    startedAt: "2026-09-25T14:48:03.000Z",
+    startedAtInferred: false,
+    version: "R16C",
+    latestReleaseAt: ASHROAD_SEED_AT,
+    lastActivityAt: ASHROAD_SEED_AT,
+    lifecycle: "active",
+    availability: "working",
+    attention: "due-soon",
+    syncStatus: "manual",
+    lastSyncedAt: ASHROAD_SEED_AT,
+    pinned: false,
+    sortOrder: 8,
+    accent: "#d5ac66",
+    mark: "AR",
+    iconUrl: "/project-icons/ashroad.svg",
+    stack: ["TypeScript", "React 19", "Vite 8", "IndexedDB", "Vitest", "Playwright", "PWA"],
+    capabilities: [
+      "Solo-RPG и детерминированный бой",
+      "Охота, экипировка и ремесло",
+      "Квесты и Отголоски",
+      "Два локальных профиля",
+      "Версионированные сохранения",
+      "Portrait-first mobile UI",
+    ],
+    links: [
+      { label: "GitHub", href: github("Ashroad"), kind: "repository" },
+      {
+        label: "Changelog",
+        href: `${github("Ashroad")}/blob/main/CHANGELOG.md`,
+        kind: "docs",
+      },
+    ],
+    facts: [
+      fact("defaultBranch", "Основная ветка", "main", github("Ashroad"), {
+        pinned: true,
+        observedAt: ASHROAD_SEED_AT,
+      }),
+      fact(
+        "versionSource",
+        "Схема версий",
+        "R-checkpoint из CHANGELOG.md; package 0.10.0 хранится отдельно",
+        `${github("Ashroad")}/blob/main/CHANGELOG.md`,
+        { source: "repository", pinned: true, observedAt: ASHROAD_SEED_AT },
+      ),
+      fact(
+        "primaryStore",
+        "Основное хранилище",
+        "IndexedDB · два локальных профиля · epoch r06-r1",
+        `${github("Ashroad")}/blob/main/README.md`,
+        { source: "repository", observedAt: ASHROAD_SEED_AT },
+      ),
+      fact(
+        "deployment",
+        "Публикация",
+        "Публичного production deployment пока нет",
+        `${github("Ashroad")}/blob/main/README.md`,
+        { source: "repository", observedAt: ASHROAD_SEED_AT },
+      ),
+    ],
+    dataProfile: {
+      mode: "local-only",
+      stores: ["IndexedDB · два слота кампании", "JSON backup"],
+      sensitivity: "private",
+    },
+    publicProfile: {
+      enabled: false,
+      slug: "ashroad",
+      tagline: "Путь через пепел",
+      shortDescription: "Мобильная solo-RPG с детерминированным боем и локальными сохранениями.",
+      categories: ["game", "rpg", "mobile"],
+      platforms: ["PWA", "Android", "Desktop"],
+      highlights: ["Local-first", "Deterministic combat", "Raster art"],
+      repositoryUrl: github("Ashroad"),
+      showVersion: true,
+      featured: false,
+      sortOrder: 8,
+    },
+  },
 ];
 
 function release(
@@ -786,8 +875,9 @@ function release(
   changelogUrl: string,
   entries: ProjectRelease["entries"],
 ): ProjectRelease {
+  const identity = projectId === projectIds.ashroad ? `${version}:${releasedAt}` : version;
   return {
-    ...meta(`release:${projectId}:${version}`, releasedAt),
+    ...meta(`release:${projectId}:${identity}`, releasedAt),
     projectId,
     version,
     releasedAt,
@@ -798,7 +888,174 @@ function release(
   };
 }
 
+const ashroadHistoricalReleaseSpecs: Array<[string, string, string]> = [
+  ["R16Q-C", "2026-10-01T14:53:40.000Z", "Owner product contracts after short R16Q test"],
+  ["R16Q", "2026-10-01T13:08:17.000Z", "NG bosses, quest variety and compact item surfaces"],
+  ["R16V", "2026-10-01T10:30:16.000Z", "Scoped item prototype and Warden HP"],
+  ["R15C-R1", "2026-10-01T07:29:08.000Z", "Manual charge and finale loot"],
+  ["R15C", "2026-10-01T00:15:51.000Z", "Upper No Grade hunt and prepared finale"],
+  ["R15B-R2", "2026-09-30T21:05:05.000Z", "Manual charge save ordering and base sword repair"],
+  ["R15B-R1", "2026-09-30T18:38:02.000Z", "No Grade finale repair and approved product knowledge"],
+  ["R15B", "2026-09-30T16:30:38.000Z", "Region finale and combat presentation repair"],
+  ["R15A-R1", "2026-09-30T12:41:02.000Z", "Visual polish and combat feedback"],
+  ["R15A", "2026-09-30T10:27:45.000Z", "Visual combat and regional interaction polish"],
+  ["R14-R1", "2026-09-30T01:51:06.000Z", "Mobile quest, hunt and inventory polish"],
+  ["R14", "2026-09-29T20:04:47.000Z", "Regional Quest Foundation and Separate Campaign Slot"],
+  ["R13-R1", "2026-09-29T17:53:27.000Z", "No Grade balance recovery"],
+  ["R13", "2026-09-29T16:11:30.000Z", "World, City Hub and Travel Foundation"],
+  ["R12", "2026-09-29T12:42:08.000Z", "Item Identity and No Grade Completion"],
+  ["R11", "2026-09-29T10:46:58.000Z", "Visual and Interaction Consolidation"],
+  ["R10-R2", "2026-09-29T08:51:26.000Z", "Восстановление настоящего Pixel-профиля"],
+  ["R10-R1", "2026-09-29T07:27:52.000Z", "Recovery, save safety and global actions"],
+  ["R10", "2026-09-28T23:45:44.000Z", "Echoes pivot and Наставник vertical"],
+  ["R09", "2026-09-28T19:54:17.000Z", "No Grade solo progression spine"],
+  ["R08B-R1", "2026-09-28T18:07:57.000Z", "Soulshot semantics and visual cleanup"],
+  ["R08B", "2026-09-28T15:24:41.000Z", "Local combat feel"],
+  ["R08A-R1", "2026-09-28T12:05:43.000Z", "Local status and recovery loop"],
+  ["R08A", "2026-09-28T12:05:43.000Z", "Инвентарь, paper-doll и восстановление"],
+  ["R07D", "2026-09-28T09:15:12.000Z", "Local owner polish and defeat delevel"],
+  ["R07C", "2026-09-28T07:40:46.000Z", "Published city shell, activity journal and character hub"],
+  ["R07B", "2026-09-27T22:51:16.000Z", "Local merchant and No Grade economy cutover"],
+  ["R07A-R2", "2026-09-27T21:41:24.000Z", "Local hunt entry and action control repair"],
+  ["R07A-R1", "2026-09-27T20:02:46.000Z", "Local serialized saves and combat UI repair"],
+  ["R07A", "2026-09-27T18:45:39.000Z", "Local combat-stage geometry checkpoint"],
+  ["R06-R2R3", "2026-09-27T16:38:38.000Z", "Local authoritative terminal rescue"],
+  ["R06-R2R2", "2026-09-27T14:54:27.000Z", "Local terminal recovery hotfix"],
+  ["R06-R2R1", "2026-09-27T13:59:44.000Z", "Local hotfix"],
+  ["R06-R2", "2026-09-27T12:09:09.000Z", "Pixel playtest repair gate"],
+  ["R06-R1", "2026-09-27T11:04:22.000Z", "Canonical save baseline"],
+  ["R06", "2026-09-27T09:40:42.000Z", "Starter Region and No Grade progression"],
+  ["R05", "2026-09-27T07:33:37.000Z", "Skills, Trainer and Books"],
+  ["R04E", "2026-09-27T06:40:49.000Z", "Compact Combat Stage and Spatial Feel"],
+  ["R04D", "2026-09-27T05:45:19.000Z", "Hero Vitality and Seamless Hunting Surface"],
+  ["R04C", "2026-09-27T04:42:27.000Z", "World Cutover and First Hunting Zone"],
+  ["R04B-R1", "2026-09-26T20:51:23.000Z", "Dynamic hotbars and solo HUD correction"],
+  ["R04B", "2026-09-26T20:00:11.000Z", "Solo Combat HUD, Universal Hotbar and Level-Up VFX"],
+  ["R04A", "2026-09-26T18:58:19.000Z", "Solo-First Progression correction"],
+  ["R04A", "2026-09-26T18:28:11.000Z", "Enemy XP/SP, Level Curve and Recruitment Pacing"],
+  ["R03A", "2026-09-26T15:34:25.000Z", "No Grade Equipment Progression"],
+  ["R03", "2026-09-26T12:16:08.000Z", "Physical Inventory, Recipe Crafting and Item Grades"],
+  ["R02", "2026-09-26T10:59:53.000Z", "Economy, Loot and Raster Bounds Safety"],
+  ["R01", "2026-09-26T09:48:19.000Z", "Raster Combat Proof"],
+  ["R00", "2026-09-26T08:20:30.000Z", "First Chapter Rework contract and 04B baseline"],
+  ["0.10.0", "2026-09-26T07:22:32.000Z", "04B Road Warden and Repeat Hunt"],
+  ["0.9.0", "2026-09-26T06:43:18.000Z", "04A First Region and Dark System-Shell Request"],
+  ["0.8.0", "2026-09-26T06:15:13.000Z", "03C Training, Books, Enchant and Fixed Battle HUD"],
+  ["0.7.1", "2026-09-26T05:37:51.000Z", "03B-R1 Training, Status Bar and Class Gear"],
+  ["0.7.0", "2026-09-25T22:41:22.000Z", "03B Free Loot, Supplies and Charges"],
+  ["0.6.0", "2026-09-25T19:27:02.000Z", "03A Equipment and Targeted Drops"],
+  ["0.5.0", "2026-09-25T18:42:43.000Z", "02B First Resource Expedition"],
+  ["0.4.0", "2026-09-25T17:53:10.000Z", "02A Versioned Save and Recruitment"],
+  ["0.3.0", "2026-09-25T17:14:52.000Z", "01C Tactics and Support Proof"],
+  ["0.2.0", "2026-09-25T16:12:24.000Z", "01B Deterministic Combat Core"],
+  ["0.1.1", "2026-09-25T15:34:43.000Z", "01A-R1 Side-view proof"],
+  ["0.1.0", "2026-09-25T14:48:03.000Z", "01A Visual Foundation proof"],
+];
+
+const ashroadHistoricalReleases = ashroadHistoricalReleaseSpecs.map(([version, releasedAt, title]) =>
+  release(
+    projectIds.ashroad,
+    version,
+    releasedAt,
+    title,
+    `${github("Ashroad")}/blob/main/CHANGELOG.md`,
+    [],
+  )
+);
+
 export const seedReleases: ProjectRelease[] = [
+  release(
+    projectIds.ashroad,
+    "R16C",
+    ASHROAD_SEED_AT,
+    "Первый полный состав Отголосков, D-заточка и оружие",
+    `${github("Ashroad")}/blob/main/CHANGELOG.md`,
+    [
+      {
+        id: "ashroad-r16c-echoes",
+        category: "added",
+        text: "Добавлены три получаемых через квесты Отголоска с собственными уровнями, навыками и конечными XP/SP.",
+      },
+      {
+        id: "ashroad-r16c-weapons",
+        category: "added",
+        text: "Добавлены пять цельных оружейных поз, согласованные заряды и постоянные маски заточки.",
+      },
+      {
+        id: "ashroad-r16c-enchant",
+        category: "added",
+        text: "Добавлены физические D-свитки заточки, разрушение предметов в D-кристаллы и рецепт D-зарядов.",
+      },
+      {
+        id: "ashroad-r16c-balance",
+        category: "changed",
+        text: "Перебалансирована прогрессия Top NG → Low D → Mid D и длительность боевых эффектов.",
+      },
+      {
+        id: "ashroad-r16c-save",
+        category: "changed",
+        text: "Оба профиля и квитанции сохранены при миграции schema 18 → 19.",
+      },
+    ],
+  ),
+  ...ashroadHistoricalReleases,
+  release(
+    projectIds.ashroad,
+    "R16B",
+    "2026-10-02T18:44:08.000Z",
+    "D-оружие, квесты и развитие боссов",
+    `${github("Ashroad")}/blob/main/CHANGELOG.md`,
+    [
+      {
+        id: "ashroad-r16b-weapons",
+        category: "added",
+        text: "Добавлены пять D-оружейных путей с активными приёмами, книгами и мастерствами.",
+      },
+      {
+        id: "ashroad-r16b-bosses",
+        category: "changed",
+        text: "Расширены квестовые доказательства, боссовые подходы и сохранённые версии боевых правил.",
+      },
+    ],
+  ),
+  release(
+    projectIds.ashroad,
+    "R16A-R1",
+    "2026-10-02T12:08:03.000Z",
+    "Свободный вход в D-грейд, ранги и мобильный ремонт",
+    `${github("Ashroad")}/blob/main/CHANGELOG.md`,
+    [
+      {
+        id: "ashroad-r16a-r1-entry",
+        category: "changed",
+        text: "Межгородской доступ переведён на оплату, а раннее D-снаряжение получило единый видимый штраф.",
+      },
+      {
+        id: "ashroad-r16a-r1-save",
+        category: "changed",
+        text: "Schema 16 → 17 сохраняет оба профиля, активные бои и исторические квитанции.",
+      },
+    ],
+  ),
+  release(
+    projectIds.ashroad,
+    "R16A",
+    "2026-10-01T21:08:26.000Z",
+    "Первый D-маршрут, пути брони и сохранённые сборки",
+    `${github("Ashroad")}/blob/main/CHANGELOG.md`,
+    [
+      {
+        id: "ashroad-r16a-route",
+        category: "added",
+        text: "Добавлены Путевая кузня, маршрут 20–25, D-экипировка, материалы и сохранённые сборки.",
+      },
+      {
+        id: "ashroad-r16a-migration",
+        category: "changed",
+        text: "Schema 15 → 16 добавляет состояние без повторной выдачи наград и сохраняет оба слота.",
+      },
+    ],
+  ),
   release(
     projectIds.utilities,
     "0.1.0",
@@ -1133,6 +1390,19 @@ export const seedBackupPolicies: BackupPolicy[] = [
     reason:
       "Versioned JSON backup, checksum и атомарный импорт покрыты тестами; физический restore drill ещё не подтверждён.",
     format: "utilities-backup-v1",
+  },
+  {
+    ...meta("backup-policy:ashroad", ASHROAD_SEED_AT),
+    projectId: projectIds.ashroad,
+    priority: 6,
+    mode: "manual-file",
+    sensitivity: "private",
+    cadenceDays: 7,
+    nextDueAt: "2026-10-10T02:35:30.000Z",
+    status: "not-configured",
+    reason:
+      "Два IndexedDB-профиля требуют регулярного versioned JSON backup; централизованный адаптер Верфи не подключён.",
+    format: "ashroad-save-r06-r1",
   },
 ];
 
@@ -1540,6 +1810,48 @@ const assessments: Record<string, Record<string, AssessmentSpec>> = {
       evidence: "Backend и аналитика отсутствуют; GitHub и Верфь получают только технические метаданные.",
     },
   },
+  [projectIds.ashroad]: {
+    "release.single-version-source": {
+      result: "exception",
+      evidence: "Продуктовые checkpoint R16C и package version 0.10.0 служат разным целям; адаптер Верфи читает R-версию из changelog.",
+      remediation: "Зафиксировать двухуровневую схему версий в документации Ashroad или позднее свести её к одному каноническому номеру.",
+    },
+    "release.canonical-changelog": {
+      result: "verified",
+      evidence: "Root CHANGELOG.md содержит последовательные R-checkpoint; точное время восстанавливается из commit history файла.",
+    },
+    "quality.check-command": {
+      result: "verified",
+      evidence: "npm run check объединяет format, typecheck, lint, unit, manifest/icon/visual doctors, Stable/Lab builds и boundary check.",
+    },
+    "quality.ci-before-deploy": {
+      result: "warning",
+      evidence: "Публичного production deployment нет; remote хранит проверенные checkpoints без подтверждённого deploy gate.",
+      remediation: "Перед production зафиксировать CI gate и отделить опубликованный релиз от development checkpoint.",
+    },
+    "pwa.installable-shell": {
+      result: "warning",
+      evidence: "Manifest и mobile shell присутствуют; README описывает только приватное preview, не production install flow.",
+      remediation: "Проверить установку, offline/update и системную панель после появления стабильного origin.",
+    },
+    "data.classification": {
+      result: "verified",
+      evidence: "Два профиля кампании хранятся локально в IndexedDB; backend и межустройственная синхронизация отсутствуют.",
+    },
+    "backup.versioned-export": {
+      result: "verified",
+      evidence: "README и save contract описывают versioned backup с epoch/schema и отдельными слотами.",
+    },
+    "backup.atomic-restore": {
+      result: "warning",
+      evidence: "Миграции и recovery покрыты автоматическими проверками; регулярный физический restore drill не зафиксирован в Верфи.",
+      remediation: "Скачать свежий backup каждого слота и проверить восстановление на чистом профиле.",
+    },
+    "security.private-data-boundary": {
+      result: "verified",
+      evidence: "Private repo; Верфь получает только технические файлы и changelog, игровые сохранения не передаются.",
+    },
+  },
 };
 
 export const seedQualityAssessments: QualityAssessment[] = seedProjects.flatMap(
@@ -1566,12 +1878,15 @@ export const seedQualityAssessments: QualityAssessment[] = seedProjects.flatMap(
 export const seedSyncEvents: SyncEvent[] = seedProjects.map((project) => {
   const isDiary = project.id === projectIds.diary;
   const isUtilities = project.id === projectIds.utilities;
-  const isQueued = isDiary || isUtilities;
+  const isAshroad = project.id === projectIds.ashroad;
+  const isQueued = isDiary || isUtilities || isAshroad;
   const occurredAt = isDiary
     ? DIARY_SEED_AT
     : isUtilities
       ? UTILITIES_SEED_AT
-      : SEED_OBSERVED_AT;
+      : isAshroad
+        ? ASHROAD_SEED_AT
+        : SEED_OBSERVED_AT;
 
   return {
     ...meta(`sync:${project.id}:github-audit`, occurredAt),
@@ -1583,13 +1898,17 @@ export const seedSyncEvents: SyncEvent[] = seedProjects.map((project) => {
       ? "Нить зарегистрирована; ожидается доступ GitHub App"
       : isUtilities
         ? "Коммунальные зарегистрированы; ожидается доступ GitHub App"
-        : `GitHub-аудит ${project.repositoryName}`,
+        : isAshroad
+          ? "Ashroad зарегистрирован; ожидается доступ GitHub App"
+          : `GitHub-аудит ${project.repositoryName}`,
     occurredAt,
     details: isDiary
       ? "Карточка не содержит дневниковых записей. После добавления Diary в Only select repositories нужна ручная сверка."
       : isUtilities
         ? "Верфь получает только технические метаданные. Показания и backup остаются в браузере пользователя."
-        : "Read-only metadata and repository files snapshot.",
+        : isAshroad
+          ? "Private repo: после добавления Ashroad в Only select repositories Верфь прочитает R-checkpoint и commit timestamps."
+          : "Read-only metadata and repository files snapshot.",
   };
 });
 

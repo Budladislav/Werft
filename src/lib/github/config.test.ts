@@ -18,6 +18,7 @@ describe("GitHub allowlist configuration", () => {
       "ChronoAtlas",
       "Diary",
       "Utilities",
+      "Ashroad",
     ]);
   });
 

@@ -562,9 +562,8 @@ function validatePayload(value: unknown): asserts value is WerftBackupPayload {
     );
   }
   assertUnique(projects, "payload.projects", (row) => String(row.slug));
-  assertUnique(releases, "payload.releases", (row) =>
-    `${String(row.projectId)}:${String(row.version)}`,
-  );
+  // A project may publish two distinct checkpoints under the same visible
+  // version label. Entity ids remain unique and preserve both journal rows.
   assertUnique(backupPolicies, "payload.backupPolicies", (row) =>
     String(row.projectId),
   );

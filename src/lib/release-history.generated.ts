@@ -8,6 +8,35 @@ export type AppReleaseHistoryEntry = {
 
 export const APP_RELEASE_HISTORY: AppReleaseHistoryEntry[] = [
   {
+    "version": "0.1.11",
+    "releasedAt": "2026-10-04T06:29:00.000Z",
+    "title": "Ashroad на стапеле",
+    "sections": [
+      {
+        "title": "Добавлено",
+        "items": [
+          "Приватная solo-RPG Ashroad зарегистрирована восьмым проектом с иконкой, техническим паспортом, backup-политикой и стартовой оценкой Werft Standard.",
+          "GitHub allowlist расширен репозиторием `Budladislav/Ashroad`; manifest `public/site.webmanifest` добавлен в список разрешённых технических файлов.",
+          "Специальный адаптер Ashroad читает всю историю корневого changelog: R-checkpoint, промежуточные коррекции и ранние semver-релизы начиная с `0.1.0`."
+        ]
+      },
+      {
+        "title": "Изменено",
+        "items": [
+          "Точное время каждого Ashroad checkpoint берётся из истории commit файла `CHANGELOG.md`, поэтому сквозной журнал сохраняет реальную межпроектную хронологию.",
+          "Повторяющиеся обозначения checkpoint, включая два разных `R04A`, получают устойчивые отдельные записи и больше не могут затереть друг друга.",
+          "Для Ashroad карточка показывает актуальный R-checkpoint, а package version хранится отдельным техническим кандидатом без ложного предупреждения о drift."
+        ]
+      },
+      {
+        "title": "Безопасность",
+        "items": [
+          "Игровые профили и backup не читаются Верфью; GitHub-мост получает только allowlisted технические файлы и read-only историю changelog."
+        ]
+      }
+    ]
+  },
+  {
     "version": "0.1.10",
     "releasedAt": "2026-09-13T15:44:00.000Z",
     "title": "Иконки проектов и чистый док",

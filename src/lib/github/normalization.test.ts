@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   inferDataProfile,
   normalizeGithubRepository,
+  parseAshroadChangelog,
   parseChangelog,
   parsePackageManifest,
   type GithubRepositorySnapshot,
@@ -57,6 +58,99 @@ describe("GitHub repository normalization", () => {
       title: null,
       entries: [{ category: "other", text: "Добавлен Rewards Lab." }],
     }]);
+  });
+
+  it("orders Ashroad checkpoints by exact changelog commit time", () => {
+    const parsed = parseAshroadChangelog(`# Changelog
+
+## R16C — first support roster (local candidate)
+
+- Added three Echo roles.
+- Fixed the rapid sit to stand cue.
+
+## R16A-R1 — mobile repair
+
+- Preserved both campaign slots.
+
+## R04A — solo-first correction — 2026-09-26, local checkpoint
+
+- Pivoted the roster.
+
+## R04A — enemy pacing — 2026-09-26, local checkpoint
+
+- Rebalanced recruitment.
+
+## 0.10.0 — 04B Road Warden and Repeat Hunt — 2026-09-26
+
+- Added the Road Warden.
+`, [
+      {
+        sha: "newer",
+        message: "R16C add support echoes",
+        committedAt: "2026-10-03T02:35:30Z",
+        url: "https://github.com/example/commit/newer",
+      },
+      {
+        sha: "older",
+        message: "R16A-R1 refine D entry",
+        committedAt: "2026-10-02T12:08:03Z",
+        url: "https://github.com/example/commit/older",
+      },
+      {
+        sha: "r04a-newer",
+        message: "R04A pivot to solo-first progression",
+        committedAt: "2026-09-26T18:58:19Z",
+        url: "https://github.com/example/commit/r04a-newer",
+      },
+      {
+        sha: "r04a-older",
+        message: "R04A rebuild enemy progression",
+        committedAt: "2026-09-26T18:28:11Z",
+        url: "https://github.com/example/commit/r04a-older",
+      },
+      {
+        sha: "semver",
+        message: "04B: add road warden",
+        committedAt: "2026-09-26T07:22:32Z",
+        url: "https://github.com/example/commit/semver",
+      },
+    ]);
+
+    expect(parsed.releases).toEqual([
+      {
+        version: "R16C",
+        releasedAt: "2026-10-03T02:35:30Z",
+        title: "first support roster (local candidate)",
+        entries: [
+          { category: "added", text: "Added three Echo roles." },
+          { category: "fixed", text: "Fixed the rapid sit to stand cue." },
+        ],
+      },
+      {
+        version: "R16A-R1",
+        releasedAt: "2026-10-02T12:08:03Z",
+        title: "mobile repair",
+        entries: [{ category: "changed", text: "Preserved both campaign slots." }],
+      },
+      {
+        version: "R04A",
+        releasedAt: "2026-09-26T18:58:19Z",
+        title: "solo-first correction",
+        entries: [{ category: "changed", text: "Pivoted the roster." }],
+      },
+      {
+        version: "R04A",
+        releasedAt: "2026-09-26T18:28:11Z",
+        title: "enemy pacing",
+        entries: [{ category: "changed", text: "Rebalanced recruitment." }],
+      },
+      {
+        version: "0.10.0",
+        releasedAt: "2026-09-26T07:22:32Z",
+        title: "04B Road Warden and Repeat Hunt",
+        entries: [{ category: "added", text: "Added the Road Warden." }],
+      },
+    ]);
   });
 
   it("extracts a canonical package version and dependencies", () => {
@@ -126,6 +220,7 @@ describe("GitHub repository normalization", () => {
         html_url: "https://github.com/example/releases/tag/v3.0.6",
       }],
       tags: [],
+      changelogCommits: [],
       workflows: [{
         id: 1,
         name: "pages build and deployment",

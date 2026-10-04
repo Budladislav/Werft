@@ -10,8 +10,10 @@
 - `Budladislav/fitness-tracker`
 - `Budladislav/ChronoAtlas`
 - `Budladislav/Diary`
+- `Budladislav/Utilities`
+- `Budladislav/Ashroad`
 
-Переменная `GITHUB_REPOSITORIES` может временно выбрать подмножество, но не расширить список. Разрешённые файлы: `package.json`, `README.md`, manifests, root `CHANGELOG.md` и `CHANGELOG_MONOFOCUS.md` только для legacy MonoFocus. Универсального file/repository proxy нет.
+Переменная `GITHUB_REPOSITORIES` может временно выбрать подмножество, но не расширить список. Разрешённые файлы: `package.json`, `README.md`, manifests, root `CHANGELOG.md` и `CHANGELOG_MONOFOCUS.md` только для legacy MonoFocus. Для Ashroad дополнительно читается read-only история commit корневого changelog, чтобы сопоставить checkpoint с точным временем. Универсального file/repository proxy нет.
 
 ## Создание GitHub App
 

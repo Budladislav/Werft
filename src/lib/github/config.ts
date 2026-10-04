@@ -8,6 +8,7 @@ export const GITHUB_REPOSITORY_CATALOG = [
   { name: "ChronoAtlas", changelogPaths: ["CHANGELOG.md"] },
   { name: "Diary", changelogPaths: ["CHANGELOG.md"] },
   { name: "Utilities", changelogPaths: ["CHANGELOG.md"] },
+  { name: "Ashroad", changelogPaths: ["CHANGELOG.md"] },
 ] as const;
 export const DEFAULT_GITHUB_REPOSITORIES = GITHUB_REPOSITORY_CATALOG.map(({ name }) => name);
 

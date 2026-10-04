@@ -105,6 +105,7 @@ function allowedFilesFor(target: GithubRepositoryTarget): KnownGithubFile[] {
     "README.md",
     "manifest.json",
     "public/manifest.webmanifest",
+    "public/site.webmanifest",
   ]);
   for (const path of target.changelogPaths) {
     if ((KNOWN_GITHUB_FILES as readonly string[]).includes(path)) {
@@ -198,8 +199,13 @@ async function repositorySnapshot(
   type TagsResponse = GithubRepositorySnapshot["tags"];
   type WorkflowsResponse = { workflows?: GithubRepositorySnapshot["workflows"] };
   type RunsResponse = { workflow_runs?: GithubRepositorySnapshot["latestRun"][] };
+  type ChangelogCommitsResponse = Array<{
+    sha: string;
+    html_url: string;
+    commit: { message: string; committer?: { date?: string | null }; author?: { date?: string | null } };
+  }>;
 
-  const [tree, languages, releases, tags, workflows, runs] = await Promise.all([
+  const [tree, languages, releases, tags, workflows, runs, changelogCommits] = await Promise.all([
     head
       ? optionalGithubJson<TreeResponse>(
         repositoryApiUrl(target, `/git/trees/${encodeURIComponent(head.sha)}?recursive=1`),
@@ -212,6 +218,13 @@ async function repositorySnapshot(
     optionalGithubJson<TagsResponse>(repositoryApiUrl(target, "/tags?per_page=20"), accessToken, fetcher),
     optionalGithubJson<WorkflowsResponse>(repositoryApiUrl(target, "/actions/workflows?per_page=100"), accessToken, fetcher),
     optionalGithubJson<RunsResponse>(repositoryApiUrl(target, "/actions/runs?per_page=1&exclude_pull_requests=true"), accessToken, fetcher),
+    target.name.toLowerCase() === "ashroad"
+      ? optionalGithubJson<ChangelogCommitsResponse>(
+        repositoryApiUrl(target, `/commits?path=CHANGELOG.md&sha=${encodeURIComponent(repository.default_branch)}&per_page=100`),
+        accessToken,
+        fetcher,
+      )
+      : Promise.resolve(null),
   ]);
 
   return {
@@ -226,6 +239,12 @@ async function repositorySnapshot(
     languages: languages ?? {},
     releases: releases ?? [],
     tags: tags ?? [],
+    changelogCommits: (changelogCommits ?? []).flatMap((commit) => {
+      const committedAt = commit.commit.committer?.date ?? commit.commit.author?.date;
+      return committedAt
+        ? [{ sha: commit.sha, message: commit.commit.message, committedAt, url: commit.html_url }]
+        : [];
+    }),
     workflows: workflows?.workflows ?? [],
     latestRun: runs?.workflow_runs?.[0] ?? null,
   };

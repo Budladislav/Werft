@@ -169,8 +169,15 @@ export async function applyGithubProjectSnapshot(
       };
       await database.projects.put(updated);
 
+      const releaseVersionCounts = new Map<string, number>();
+      for (const item of snapshot.changelog.releases) {
+        releaseVersionCounts.set(item.version, (releaseVersionCounts.get(item.version) ?? 0) + 1);
+      }
       for (const [releaseIndex, item] of snapshot.changelog.releases.entries()) {
-        const id = `release:${project.id}:${item.version}`;
+        const releaseIdentity = project.slug === "ashroad" || (releaseVersionCounts.get(item.version) ?? 0) > 1
+          ? `${item.version}:${item.releasedAt}`
+          : item.version;
+        const id = `release:${project.id}:${releaseIdentity}`;
         const existing = await database.releases.get(id);
         if (existing?.source === "manual") continue;
         const entries: ChangeEntry[] = item.entries.map((entry, index) => ({

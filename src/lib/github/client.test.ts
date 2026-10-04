@@ -132,6 +132,7 @@ describe("GitHub synchronization client", () => {
       "README.md",
       "manifest.json",
       "public/manifest.webmanifest",
+      "public/site.webmanifest",
       "CHANGELOG_MONOFOCUS.md",
       "CHANGELOG.md",
     ].some((allowed) => path.includes(`/contents/${allowed}`)))).toBe(true);
@@ -144,5 +145,83 @@ describe("GitHub synchronization client", () => {
       config,
       fetcher as typeof fetch,
     )).rejects.toMatchObject({ code: "invalid-owner" });
+  });
+
+  it("reads Ashroad checkpoint timestamps from the allowlisted changelog history", async () => {
+    const ashroadConfig = { ...config, repositories: ["Ashroad"] };
+    const requested: string[] = [];
+    const fetcher = vi.fn(async (input: string | URL | Request) => {
+      const url = new URL(input instanceof Request ? input.url : String(input));
+      requested.push(`${url.pathname}${url.search}`);
+      if (url.pathname === "/user") return json({ id: GITHUB_OWNER_ID, login: "Budladislav" });
+      if (url.pathname === "/repos/Budladislav/Ashroad") {
+        return json({
+          id: 20,
+          owner: { id: GITHUB_OWNER_ID, login: "Budladislav" },
+          name: "Ashroad",
+          full_name: "Budladislav/Ashroad",
+          private: true,
+          visibility: "private",
+          html_url: "https://github.com/Budladislav/Ashroad",
+          default_branch: "main",
+          description: "Portrait-first solo RPG",
+          homepage: null,
+          topics: ["game"],
+          language: "TypeScript",
+          created_at: "2026-09-25T14:48:03Z",
+          pushed_at: "2026-10-03T02:35:30Z",
+          archived: false,
+          has_pages: false,
+        });
+      }
+      if (url.pathname === "/repos/Budladislav/Ashroad/commits/main") {
+        return json({ sha: "ash123", html_url: "https://github.com/Budladislav/Ashroad/commit/ash123" });
+      }
+      if (url.pathname === "/repos/Budladislav/Ashroad/commits" && url.searchParams.get("path") === "CHANGELOG.md") {
+        return json([{
+          sha: "ash123",
+          html_url: "https://github.com/Budladislav/Ashroad/commit/ash123",
+          commit: {
+            message: "R16C add support echoes",
+            committer: { date: "2026-10-03T02:35:30Z" },
+          },
+        }]);
+      }
+      const contentPrefix = "/repos/Budladislav/Ashroad/contents/";
+      if (url.pathname.startsWith(contentPrefix)) {
+        const path = decodeURIComponent(url.pathname.slice(contentPrefix.length));
+        if (path === "package.json") return json(encodedFile(JSON.stringify({ version: "0.10.0", dependencies: { react: "19" }, devDependencies: { vite: "8" } }), path));
+        if (path === "README.md") return json(encodedFile("Ashroad хранит два профиля в IndexedDB.", path));
+        if (path === "CHANGELOG.md") return json(encodedFile("## R16C — first support roster\n\n- Added three Echo roles.", path));
+        if (path === "public/site.webmanifest") return json(encodedFile("{}", path));
+        return json({ message: "Not Found" }, 404);
+      }
+      if (url.pathname.endsWith("/git/trees/ash123")) return json({ tree: [{ path: "src/persistence/campaign-save.ts", type: "blob" }] });
+      if (url.pathname.endsWith("/languages")) return json({ TypeScript: 1000 });
+      if (url.pathname.endsWith("/releases")) return json([]);
+      if (url.pathname.endsWith("/tags")) return json([]);
+      if (url.pathname.endsWith("/actions/workflows")) return json({ workflows: [] });
+      if (url.pathname.endsWith("/actions/runs")) return json({ workflow_runs: [] });
+      return json({ message: "Unexpected endpoint" }, 500);
+    });
+
+    const envelope = await syncGithubProjects(
+      "ghu_read_only_token_for_tests_123456",
+      ashroadConfig,
+      fetcher as typeof fetch,
+      new Date("2026-10-04T12:00:00.000Z"),
+    );
+
+    expect(envelope.errors).toEqual([]);
+    expect(envelope.projects[0].version).toMatchObject({
+      value: "R16C",
+      source: "changelog",
+      consistency: "unknown",
+    });
+    expect(envelope.projects[0].changelog.releases[0]).toMatchObject({
+      version: "R16C",
+      releasedAt: "2026-10-03T02:35:30Z",
+    });
+    expect(requested).toContain("/repos/Budladislav/Ashroad/commits?path=CHANGELOG.md&sha=main&per_page=100");
   });
 });

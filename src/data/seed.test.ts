@@ -26,7 +26,7 @@ describe("Werft initial data", () => {
     await ensureSeeded(database);
 
     const projects = await database.projects.orderBy("sortOrder").toArray();
-    expect(projects).toHaveLength(7);
+    expect(projects).toHaveLength(8);
     expect(projects.map((project) => project.repositoryName)).toEqual([
       "Budladislav/Flow",
       "Budladislav/Planer",
@@ -35,8 +35,9 @@ describe("Werft initial data", () => {
       "Budladislav/ChronoAtlas",
       "Budladislav/Diary",
       "Budladislav/Utilities",
+      "Budladislav/Ashroad",
     ]);
-    expect(projects.at(-1)).toMatchObject({
+    expect(projects.find((project) => project.id === projectIds.utilities)).toMatchObject({
       name: "Коммунальные",
       repositoryVisibility: "public",
       version: "0.1.0",
@@ -46,10 +47,27 @@ describe("Werft initial data", () => {
     expect(projects.find((project) => project.id === projectIds.monoFocus)).toMatchObject({ name: "Takt" });
     expect(projects.find((project) => project.id === projectIds.diary)?.iconUrl).toBe("/project-icons/nit.svg");
     expect(projects.find((project) => project.id === projectIds.utilities)?.iconUrl).toBe("/project-icons/utilities.svg");
+    expect(projects.find((project) => project.id === projectIds.ashroad)).toMatchObject({
+      name: "Ashroad",
+      repositoryVisibility: "private",
+      version: "R16C",
+      iconUrl: "/project-icons/ashroad.svg",
+    });
     expect(projects.some((project) => /ren2gar/iu.test(project.repositoryName))).toBe(
       false,
     );
     expect(await database.releases.count()).toBeGreaterThan(5);
+    const ashroadReleases = (await database.releases.where("projectId").equals(projectIds.ashroad).toArray())
+      .sort((a, b) => b.releasedAt.localeCompare(a.releasedAt));
+    expect(ashroadReleases.length).toBeGreaterThan(60);
+    expect(ashroadReleases.slice(0, 4).map((release) => release.version)).toEqual([
+      "R16C",
+      "R16B",
+      "R16A-R1",
+      "R16A",
+    ]);
+    expect(ashroadReleases.at(-1)?.version).toBe("0.1.0");
+    expect(ashroadReleases.filter((release) => release.version === "R04A")).toHaveLength(2);
     expect(await database.ideas.count()).toBeGreaterThanOrEqual(4);
   });
 
@@ -87,6 +105,7 @@ describe("Werft initial data", () => {
       projectIds.safePlay,
       projectIds.chronoAtlas,
       projectIds.utilities,
+      projectIds.ashroad,
     ]);
   });
 

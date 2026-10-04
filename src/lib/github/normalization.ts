@@ -40,6 +40,12 @@ export type GithubRepositorySnapshot = {
     html_url: string;
   }>;
   tags: Array<{ name: string; commit: { sha: string } }>;
+  changelogCommits: Array<{
+    sha: string;
+    message: string;
+    committedAt: string;
+    url: string;
+  }>;
   workflows: Array<{
     id: number;
     name: string;
@@ -65,6 +71,7 @@ export const KNOWN_GITHUB_FILES = [
   "README.md",
   "manifest.json",
   "public/manifest.webmanifest",
+  "public/site.webmanifest",
 ] as const;
 
 export type KnownGithubFile = (typeof KNOWN_GITHUB_FILES)[number];
@@ -77,6 +84,7 @@ type PackageManifest = {
 const SEMVER_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
 const RELEASE_HEADING = /^##\s+\[?v?(\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)\]?\s*(?:—|-)\s*(\d{4}-\d{2}-\d{2}|\d{2}\.\d{2}\.\d{4})(?:[ T](\d{2}:\d{2}(?::\d{2})?)(?:\s*(Z|[+-]\d{2}:\d{2}))?)?(?:\s+(?:—|-)\s+(.+?))?\s*$/i;
 const UNRELEASED_HEADING = /^##\s+\[?(?:unreleased|невыпущено|в разработке)\]?\s*$/i;
+const ASHROAD_RELEASE_HEADING = /^(#{1,2})\s+((?:R[0-9A-Z-]+)|(?:\d+\.\d+\.\d+))\s+—\s+(.+?)\s*$/i;
 
 const DEPENDENCY_STACK: Array<[RegExp, string]> = [
   [/^next$/, "Next.js"],
@@ -199,6 +207,87 @@ export function parseChangelog(markdown: string | undefined): {
   return { hasUnreleased, releases };
 }
 
+function categoryForEntry(value: string): GithubReleaseCategory {
+  const normalized = value.toLowerCase();
+  if (/^(added|добав)/.test(normalized)) return "added";
+  if (/^(fixed|исправ)/.test(normalized)) return "fixed";
+  if (/^(security|безопас)/.test(normalized)) return "security";
+  return "changed";
+}
+
+export function parseAshroadChangelog(
+  markdown: string | undefined,
+  commits: GithubRepositorySnapshot["changelogCommits"],
+): { hasUnreleased: boolean; releases: NormalizedGithubRelease[] } {
+  if (!markdown) return { hasUnreleased: false, releases: [] };
+
+  const levelTwoVersions = new Set(
+    markdown.split(/\r?\n/).flatMap((line) => {
+      const match = line.trim().match(ASHROAD_RELEASE_HEADING);
+      return match?.[1] === "##" ? [match[2].toUpperCase()] : [];
+    }),
+  );
+  const commitsByCheckpoint = new Map<string, string[]>();
+  for (const commit of commits) {
+    const firstLine = commit.message.split(/\r?\n/, 1)[0].trim();
+    const match = firstLine.match(/^((?:R[0-9A-Z-]+)|(?:\d{2}[A-Z](?:-R\d+)?))(?:\s|:|$)/i);
+    if (match) {
+      const key = match[1].toUpperCase();
+      commitsByCheckpoint.set(key, [...(commitsByCheckpoint.get(key) ?? []), commit.committedAt]);
+    }
+  }
+
+  const releases: NormalizedGithubRelease[] = [];
+  const usedCommitTimes = new Set<string>();
+  let current: NormalizedGithubRelease | null = null;
+  for (const rawLine of markdown.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    const heading = line.match(ASHROAD_RELEASE_HEADING);
+    if (heading) {
+      const headingLevel = heading[1];
+      const version = heading[2].startsWith("R") ? heading[2].toUpperCase() : heading[2];
+      if (headingLevel === "#" && levelTwoVersions.has(version.toUpperCase())) {
+        current = null;
+        continue;
+      }
+      const rawTitle = heading[3].trim();
+      const titleCheckpoint = rawTitle.match(/^([0-9]{2}[A-Z](?:-R\d+)?)(?:\s|:|$)/i)?.[1]?.toUpperCase();
+      const checkpoint = version.startsWith("R") ? version : titleCheckpoint;
+      let releasedAt: string | undefined;
+      if (version === "R04B") releasedAt = commitsByCheckpoint.get("R04B")?.at(-1);
+      else if (version === "R04B-R1") releasedAt = commitsByCheckpoint.get("R04B")?.[0];
+      else releasedAt = checkpoint ? commitsByCheckpoint.get(checkpoint)?.shift() : undefined;
+
+      const inlineDate = rawTitle.match(/(\d{4}-\d{2}-\d{2})/)?.[1];
+      if (!releasedAt && inlineDate) {
+        releasedAt = commits.find((commit) =>
+          commit.committedAt.slice(0, 10) === inlineDate && !usedCommitTimes.has(commit.committedAt)
+        )?.committedAt;
+      }
+      if (releasedAt) usedCommitTimes.add(releasedAt);
+      const title = rawTitle.replace(/\s+—\s+\d{4}-\d{2}-\d{2}(?:,.*)?$/i, "").trim();
+      current = releasedAt
+        ? { version, releasedAt, title, entries: [] }
+        : null;
+      if (current) releases.push(current);
+      if (releases.length >= 100) break;
+      continue;
+    }
+    if (/^#{1,2}\s+/.test(line)) {
+      current = null;
+      continue;
+    }
+    if (!current || !line || line === "---" || line.startsWith("#")) continue;
+
+    const bullet = line.match(/^[-*]\s+(.+)$/)?.[1]?.trim();
+    const text = bullet ?? line;
+    if (text && current.entries.length < 100) {
+      current.entries.push({ category: categoryForEntry(text), text });
+    }
+  }
+  return { hasUnreleased: false, releases };
+}
+
 function readmeSummary(markdown: string | undefined): string | null {
   if (!markdown) return null;
   const blocks = markdown.replace(/\r/g, "").split(/\n\s*\n/);
@@ -227,6 +316,7 @@ function versionState(
   changelog: NormalizedGithubRelease[],
   releases: GithubRepositorySnapshot["releases"],
   tags: GithubRepositorySnapshot["tags"],
+  preferCheckpoint = false,
 ): NormalizedGithubProject["version"] {
   const candidates: GithubVersionCandidate[] = [];
   const add = (source: GithubVersionCandidate["source"], value: string | null) => {
@@ -238,12 +328,16 @@ function versionState(
   add("github-release", cleanVersion(releases.find((release) => !release.draft)?.tag_name));
   add("git-tag", cleanVersion(tags[0]?.name));
 
-  const selected = candidates[0];
+  const selected = preferCheckpoint
+    ? candidates.find((candidate) => candidate.source === "changelog") ?? candidates[0]
+    : candidates[0];
   const distinct = new Set(candidates.map((candidate) => candidate.value));
   return {
     value: selected?.value ?? "unknown",
     source: selected?.source ?? "unknown",
-    consistency: candidates.length < 2 ? "unknown" : distinct.size === 1 ? "consistent" : "drift",
+    consistency: preferCheckpoint
+      ? "unknown"
+      : candidates.length < 2 ? "unknown" : distinct.size === 1 ? "consistent" : "drift",
     candidates,
   };
 }
@@ -287,6 +381,7 @@ function stackForSnapshot(
 
   const lowerPaths = snapshot.treePaths.map((path) => path.toLowerCase());
   if (snapshot.files["manifest.json"] || snapshot.files["public/manifest.webmanifest"]
+    || snapshot.files["public/site.webmanifest"]
     || lowerPaths.some((path) => /(^|\/)sw\.(?:js|ts)$/.test(path))) {
     add("PWA", "manifest");
   }
@@ -352,7 +447,13 @@ export function normalizeGithubRepository(
     : snapshot.files["CHANGELOG_MONOFOCUS.md"]
       ? "CHANGELOG_MONOFOCUS.md"
       : null;
-  const parsedChangelog = parseChangelog(changelogPath ? snapshot.files[changelogPath] : undefined);
+  const isAshroad = snapshot.repository.name.toLowerCase() === "ashroad";
+  const parsedChangelog = isAshroad
+    ? parseAshroadChangelog(
+      changelogPath ? snapshot.files[changelogPath] : undefined,
+      snapshot.changelogCommits,
+    )
+    : parseChangelog(changelogPath ? snapshot.files[changelogPath] : undefined);
   const changelogReleases = applyGithubReleaseTimestamps(
     parsedChangelog.releases,
     snapshot.releases,
@@ -410,7 +511,13 @@ export function normalizeGithubRepository(
       headSha: snapshot.head?.sha ?? null,
     },
     purpose,
-    version: versionState(manifest.version, changelogReleases, snapshot.releases, snapshot.tags),
+    version: versionState(
+      manifest.version,
+      changelogReleases,
+      snapshot.releases,
+      snapshot.tags,
+      isAshroad,
+    ),
     changelog: {
       found: Boolean(changelogPath),
       sourcePath: changelogPath,
